@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">EasyQrPay</string>
+    <string name="qr_page_title">이용해 주셔서 감사합니다!!!</string>
+    <string name="qr_page_price_message_prefix">"총 "</string>
+    <string name="qr_page_price_message_suffix">원 입니다!</string>
+    <string name="qr_page_toss_qr_title">토스 송금 QR이에요.\\n(편함)</string>
+    <string name="qr_page_bank_account_title">계좌 정보</string>
+    <string name="shop_page_category_all">전체</string>
+    <string name="shop_page_category_badge">캔뱃지</string>
+    <string name="shop_page_category_photo_card">포토카드</string>
+    <string name="shop_page_category_keyring">키링</string>
+    <string name="shop_page_product_badgeA">카페 구사 캔뱃지</string>
+    <string name="shop_page_product_badgeB">산타 구사 캔뱃지</string>
+    <string name="shop_page_product_badgeC">빨간 모자 구사 캔뱃지</string>
+    <string name="shop_page_product_badgeD">숨은 구사 캔뱃지</string>
+    <string name="shop_page_product_badgeE">늑대 구사 캔뱃지</string>
+    <string name="shop_page_product_badgeF">수영 구사 캔뱃지</string>
+    <string name="shop_page_total_price_title">총 금액</string>
+    <string name="shop_page_shopping_list_title">주문 목록</string>
+    <string name="shop_page_order_start">주문하기</string>
+    <string name="shop_page_product_badge45">미니 UMP45 핀뱃지</string>
+    <string name="shop_page_product_badge9">미니 UMP9 핀뱃지</string>
+    <string name="shop_page_product_badge416">미니 HK416 핀뱃지</string>
+    <string name="shop_page_product_badge11">미니 G11 핀뱃지</string>
+    <string name="shop_page_category_post_card">엽서</string>
+    <string name="shop_page_category_scroll">족자봉</string>
+    <string name="shop_page_product_post_card_cafe94">카페 구사 엽서</string>
+    <string name="shop_page_product_post_card_set_mini404">미니 404 엽서세트</string>
+    <string name="shop_page_product_scroll_cafe94">카페 구사 족자봉</string>
+    <string name="shop_page_product_photo_card_set_9415">농농 9415 포토카드 세트</string>
+</resources>
