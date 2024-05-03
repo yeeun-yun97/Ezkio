@@ -256,7 +256,8 @@ fun ShopPage(
                 ) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                        verticalArrangement = Arrangement.spacedBy(24.dp),
+                        contentPadding = PaddingValues(vertical = 20.dp)
                     ) {
                         itemsIndexed(shoppingList.toList()) { index, item ->
                             ShoppingItem(
