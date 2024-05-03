@@ -3,7 +3,7 @@
     <string name="qr_page_title">이용해 주셔서 감사합니다!!!</string>
     <string name="qr_page_price_message_prefix">"총 "</string>
     <string name="qr_page_price_message_suffix">원 입니다!</string>
-    <string name="qr_page_toss_qr_title">토스 송금 QR이에요.\\n(편함)</string>
+    <string name="qr_page_toss_qr_title">토스 송금 QR</string>
     <string name="qr_page_bank_account_title">계좌 정보</string>
     <string name="shop_page_category_all">전체</string>
     <string name="shop_page_category_badge">캔뱃지</string>

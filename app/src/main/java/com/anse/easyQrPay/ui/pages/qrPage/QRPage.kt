@@ -88,7 +88,7 @@ fun QRPage(
                     append(
                         stringResource(id = R.string.qr_page_price_message_prefix)
                     )
-                    pushStyle(style = SpanStyle(fontSize = 150.sp))
+                    pushStyle(style = SpanStyle(fontSize = 100.sp))
                     append(price.toString())
                     pop()
                     append(
@@ -105,7 +105,7 @@ fun QRPage(
             Spacer(Modifier.height(15.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(50.dp)
+                horizontalArrangement = Arrangement.spacedBy(30.dp)
             ) {
                 QRItem(
                     stringResource(id = R.string.qr_page_toss_qr_title),
@@ -169,6 +169,7 @@ private fun QRItem(
             style = LocalTextStyle.current.copy(
                 fontSize = 32.sp,
                 lineHeight = 36.sp,
+                fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center
             )
         )
