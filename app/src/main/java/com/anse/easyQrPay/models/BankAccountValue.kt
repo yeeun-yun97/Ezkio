@@ -1,4 +1,4 @@
-package com.anse.easyQrPay.core.models
+package com.anse.easyQrPay.models
 
 import java.net.URLEncoder
 

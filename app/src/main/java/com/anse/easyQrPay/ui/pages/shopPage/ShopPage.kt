@@ -1,6 +1,8 @@
 package com.anse.easyQrPay.ui.pages.shopPage
 
 import androidx.activity.compose.BackHandler
+import android.graphics.BitmapFactory
+import android.util.Base64
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -23,13 +25,11 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Badge
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,23 +44,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.anse.easyQrPay.R
-import com.anse.easyQrPay.core.models.product.ProductCategoryValue
-import com.anse.easyQrPay.core.models.product.ProductValue
+import com.anse.easyQrPay.models.product.ProductCategoryValue
+import com.anse.easyQrPay.models.product.ProductValue
 import com.anse.easyQrPay.ui.pages.qrPage.QRPage
-import com.anse.easyQrPay.ui.theme.EasyQrPayTheme
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
+
 
 enum class ProductCategoryValueImpl(
     @StringRes override val nameRes: Int,
@@ -76,91 +77,21 @@ enum class ProductCategoryValueImpl(
     ),
     SCROLL(
         nameRes = R.string.shop_page_category_scroll
-    ),
-}
+    );
 
-val productList_ = listOf(
-    ProductValue(
-        productCode = "BADGE_45",
-        nameRes = R.string.shop_page_product_badge45,
-        imageRes = R.drawable.badge_45,
-        2000,
-        10,
-        ProductCategoryValueImpl.Badge
-    ),
-    ProductValue(
-        productCode = "BADGE_9",
-        nameRes = R.string.shop_page_product_badge9,
-        imageRes = R.drawable.badge_9,
-        2000,
-        10,
-        ProductCategoryValueImpl.Badge
-    ),
-    ProductValue(
-        productCode = "BADGE_11",
-        nameRes = R.string.shop_page_product_badge11,
-        imageRes = R.drawable.badge_11,
-        2000,
-        10,
-        ProductCategoryValueImpl.Badge
-    ),
-    ProductValue(
-        productCode = "BADGE_416",
-        nameRes = R.string.shop_page_product_badge416,
-        imageRes = R.drawable.badge_416,
-        2000,
-        10,
-        ProductCategoryValueImpl.Badge
-    ),
-    ProductValue(
-        productCode = "POST_CARD_SET_MINI404",
-        nameRes = R.string.shop_page_product_post_card_set_mini404,
-        imageRes = R.drawable.post_card_set_mini404,
-        1000,
-        40,
-        ProductCategoryValueImpl.POSTCARD
-    ),
-    ProductValue(
-        productCode = "POST_CARD_CAFE94",
-        nameRes = R.string.shop_page_product_post_card_cafe94,
-        imageRes = R.drawable.post_card_cafe94,
-        1000,
-        40,
-        ProductCategoryValueImpl.POSTCARD
-    ),
-    ProductValue(
-        productCode = "PHOTO_CARD_SET_9415",
-        nameRes = R.string.shop_page_product_photo_card_set_9415,
-        imageRes = R.drawable.photo_card_set_9415,
-        2000,
-        500,
-        ProductCategoryValueImpl.PhotoCard
-    ),
-    ProductValue(
-        productCode = "SCROLL_CAFE94",
-        nameRes = R.string.shop_page_product_scroll_cafe94,
-        imageRes = R.drawable.scroll_cafe94,
-        10000,
-        10,
-        ProductCategoryValueImpl.SCROLL
-    ),
-)
-
-@Preview
-@Composable
-private fun PreviewShopPage() {
-    EasyQrPayTheme {
-        ShopPage(
-//            navigateToQRPage = { }
-        )
+    companion object {
+        fun fromName(name: String): ProductCategoryValue {
+            return values().find { it.name == name } ?: throw IllegalArgumentException("No such category: $name")
+        }
     }
 }
+
 
 
 @Composable
 fun ShopPage(
     categoryList: List<ProductCategoryValue> = ProductCategoryValueImpl.entries,
-    productList: List<ProductValue> = productList_,
+    productList: List<ProductValue>,
 //    navigateToQRPage: () -> Unit,
 ) {
     val selectedCategory = rememberSaveable { mutableStateOf<ProductCategoryValue?>(null) }
@@ -171,11 +102,11 @@ fun ShopPage(
         }
     }
 
-    val productList = rememberSaveable { mutableStateOf(productList) }
+    val selectedProductList = rememberSaveable { mutableStateOf(productList) }
     LaunchedEffect(key1 = selectedCategory.value) {
         selectedCategory.value.let { selectedCategory ->
-            if (selectedCategory == null) productList.value = productList_
-            else productList.value = productList_.filter { it.category == selectedCategory }
+            if (selectedCategory == null) selectedProductList.value = productList
+            else selectedProductList.value = productList.filter { ProductCategoryValueImpl.fromName(it.category) == selectedCategory }
         }
     }
 
@@ -221,7 +152,7 @@ fun ShopPage(
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalArrangement = Arrangement.spacedBy(20.dp),
                     ) {
-                        itemsIndexed(productList.value) { index, item ->
+                        itemsIndexed(selectedProductList.value) { index, item ->
                             ProductItem(
                                 product = item,
                                 onClick = { shoppingList[item] = (shoppingList[item] ?: 0) + 1 },
@@ -389,7 +320,7 @@ fun ProductItem(
         ) {
             Column(Modifier.fillMaxWidth()) {
                 Image(
-                    painter = painterResource(id = product.imageRes),
+                    painter = BitmapPainter(image = StringToBitmap(product.image)!!),
                     contentDescription = "product_image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.aspectRatio(1f, matchHeightConstraintsFirst = false),
@@ -397,7 +328,7 @@ fun ProductItem(
                 )
                 Spacer(Modifier.height(28.dp))
                 Text(
-                    text = stringResource(product.nameRes),
+                    text = product.name,
                     fontSize = 20.sp,
                     lineHeight = 24.sp,
                     fontWeight = FontWeight.Medium,

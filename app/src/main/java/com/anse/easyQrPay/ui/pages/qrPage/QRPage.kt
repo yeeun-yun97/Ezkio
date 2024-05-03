@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.anse.easyQrPay.R
-import com.anse.easyQrPay.core.models.BankAccountValue
-import com.anse.easyQrPay.core.models.accountNumberNoDashOrSpace
-import com.anse.easyQrPay.core.models.bankNameUrlEncoded
+import com.anse.easyQrPay.models.BankAccountValue
+import com.anse.easyQrPay.models.accountNumberNoDashOrSpace
+import com.anse.easyQrPay.models.bankNameUrlEncoded
 import com.anse.easyQrPay.ui.theme.EasyQrPayTheme
 
 @Preview(device = "spec:width=1280dp,height=800dp,dpi=240")

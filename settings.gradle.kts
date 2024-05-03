@@ -16,5 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "EasyQrPay"
 include(":app")
-include(":core")
 include(":uiKit")
