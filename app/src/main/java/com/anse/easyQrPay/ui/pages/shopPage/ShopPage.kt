@@ -195,6 +195,7 @@ fun ShopPage(
         ) {
             Column {
                 if (!isCalculating.value) {
+                    Spacer(Modifier.height(20.dp))
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.Start),
                         contentPadding = PaddingValues(horizontal = 60.dp, vertical = 10.dp),
@@ -251,7 +252,8 @@ fun ShopPage(
                 Box(
                     Modifier
                         .weight(1f)
-                        .fillMaxWidth()) {
+                        .fillMaxWidth()
+                ) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(24.dp)
