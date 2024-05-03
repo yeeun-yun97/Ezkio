@@ -1,5 +1,6 @@
 package com.anse.easyQrPay.ui.pages.shopPage
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import com.anse.easyQrPay.R
 import com.anse.easyQrPay.core.models.product.ProductCategoryValue
 import com.anse.easyQrPay.core.models.product.ProductValue
+import com.anse.easyQrPay.ui.pages.qrPage.QRPage
 import com.anse.easyQrPay.ui.theme.EasyQrPayTheme
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
@@ -148,7 +151,7 @@ val productList_ = listOf(
 private fun PreviewShopPage() {
     EasyQrPayTheme {
         ShopPage(
-            navigateToQRPage = { }
+//            navigateToQRPage = { }
         )
     }
 }
@@ -158,10 +161,15 @@ private fun PreviewShopPage() {
 fun ShopPage(
     categoryList: List<ProductCategoryValue> = ProductCategoryValueImpl.entries,
     productList: List<ProductValue> = productList_,
-    navigateToQRPage: () -> Unit,
+//    navigateToQRPage: () -> Unit,
 ) {
-    val selectedCategory = remember { mutableStateOf<ProductCategoryValue?>(null) }
+    val selectedCategory = rememberSaveable { mutableStateOf<ProductCategoryValue?>(null) }
     val shoppingList = remember { mutableStateMapOf<ProductValue, Int>() }
+    val shoppingPrice = remember {
+        derivedStateOf {
+            shoppingList.entries.map { (product, amount) -> product.price * amount }.sum()
+        }
+    }
 
     val productList = rememberSaveable { mutableStateOf(productList) }
     LaunchedEffect(key1 = selectedCategory.value) {
@@ -169,6 +177,13 @@ fun ShopPage(
             if (selectedCategory == null) productList.value = productList_
             else productList.value = productList_.filter { it.category == selectedCategory }
         }
+    }
+
+    val isCalculating = rememberSaveable { mutableStateOf(false) }
+
+
+    BackHandler {
+        isCalculating.value = false
     }
 
     Row() {
@@ -179,37 +194,43 @@ fun ShopPage(
             color = Color(0xFF3C3C3C)
         ) {
             Column {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.Start),
-                    contentPadding = PaddingValues(horizontal = 60.dp, vertical = 10.dp),
-                ) {
-                    item {
-                        CategoryItem(
-                            category = null,
-                            isSelected = selectedCategory.value == null,
-                            onClick = { selectedCategory.value = null },
-                        )
+                if (!isCalculating.value) {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(15.dp, Alignment.Start),
+                        contentPadding = PaddingValues(horizontal = 60.dp, vertical = 10.dp),
+                    ) {
+                        item {
+                            CategoryItem(
+                                category = null,
+                                isSelected = selectedCategory.value == null,
+                                onClick = { selectedCategory.value = null },
+                            )
+                        }
+                        itemsIndexed(categoryList) { index, item ->
+                            CategoryItem(
+                                category = item,
+                                isSelected = selectedCategory.value == item,
+                                onClick = { selectedCategory.value = item },
+                            )
+                        }
                     }
-                    itemsIndexed(categoryList) { index, item ->
-                        CategoryItem(
-                            category = item,
-                            isSelected = selectedCategory.value == item,
-                            onClick = { selectedCategory.value = item },
-                        )
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(4),
+                        contentPadding = PaddingValues(horizontal = 60.dp, vertical = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    ) {
+                        itemsIndexed(productList.value) { index, item ->
+                            ProductItem(
+                                product = item,
+                                onClick = { shoppingList[item] = (shoppingList[item] ?: 0) + 1 },
+                            )
+                        }
                     }
-                }
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(4),
-                    contentPadding = PaddingValues(horizontal = 60.dp, vertical = 20.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
-                ) {
-                    itemsIndexed(productList.value) { index, item ->
-                        ProductItem(
-                            product = item,
-                            onClick = { shoppingList[item] = (shoppingList[item] ?: 0) + 1 },
-                        )
-                    }
+                } else {
+                    QRPage(
+                        price = shoppingPrice.value
+                    )
                 }
             }
         }
@@ -242,27 +263,29 @@ fun ShopPage(
                         )
                     }
                 }
-                Text(stringResource(R.string.shop_page_total_price_title), fontSize = 20.sp, lineHeight = 20.sp)
-                Text("9000원", fontSize = 36.sp, lineHeight = 36.sp, fontWeight = FontWeight.Bold)
-                Spacer(Modifier.height(20.dp))
-                AnseButton(
-                    onClick = { if (it) navigateToQRPage() },
-                    modifier = Modifier.fillMaxWidth(),
-                    buttonStyle = AnseButtonStyle.newStyle(
-                        shape = RoundedCornerShape(20.dp),
-                        colors = AnseButtonColors(
-                            contentColor = Color.Black,
-                            containerColor = Color(0xFFABDE82),
-                        ),
-                        contentPadding = PaddingValues(vertical = 20.dp),
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.shop_page_order_start),
-                        modifier = Modifier.align(Alignment.Center),
-                        fontSize = 28.sp,
-                        lineHeight = 28.sp,
-                    )
+                if (!isCalculating.value && shoppingList.isNotEmpty()) {
+                    Text(stringResource(R.string.shop_page_total_price_title), fontSize = 20.sp, lineHeight = 20.sp)
+                    Text("${shoppingPrice.value}원", fontSize = 36.sp, lineHeight = 36.sp, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(20.dp))
+                    AnseButton(
+                        onClick = { if (it) isCalculating.value = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        buttonStyle = AnseButtonStyle.newStyle(
+                            shape = RoundedCornerShape(20.dp),
+                            colors = AnseButtonColors(
+                                contentColor = Color.Black,
+                                containerColor = Color(0xFFABDE82),
+                            ),
+                            contentPadding = PaddingValues(vertical = 20.dp),
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.shop_page_order_start),
+                            modifier = Modifier.align(Alignment.Center),
+                            fontSize = 28.sp,
+                            lineHeight = 28.sp,
+                        )
+                    }
                 }
                 Spacer(Modifier.height(27.dp))
             }

@@ -24,22 +24,22 @@ class MainActivity : ComponentActivity() {
         setContent {
             EasyQrPayTheme {
                 val navController = rememberNavController()
-                NavHost(startDestination = "home", navController = navController) {
-                    composable("home") {
-                        IdlePage(
-                            navigateToShopPage = { navController.navigate("shop") }
-                        )
-                    }
+                NavHost(startDestination = "shop", navController = navController) {
+//                    composable("home") {
+//                        IdlePage(
+//                            navigateToShopPage = { navController.navigate("shop") }
+//                        )
+//                    }
 
                     composable("shop") {
                         ShopPage(
-                            navigateToQRPage = { navController.navigate("qr") }
+//                            navigateToQRPage = { navController.navigate("qr") }
                         )
                     }
 
-                    composable("qr") {
-                        QRPage()
-                    }
+//                    composable("qr") {
+//                        QRPage()
+//                    }
 
                 }
 
