@@ -31,4 +31,7 @@
     <string name="shop_page_order_cancel">주문 취소하기</string>
     <string name="shop_page_shopping_list_empty">구매할 물건을 왼쪽 패널에서 터치하여 담아보세요!</string>
     <string name="unknown">알 수 없음</string>
+    <string name="shop_page_finish_selling_dialog_title">주문을 완료할까요?</string>
+    <string name="shop_page_finish_selling_dialog_message">스텝 이외에 조작하지 말아주세요!!</string>
+    <string name="shop_page_order_finish">주문 종료하기</string>
 </resources>

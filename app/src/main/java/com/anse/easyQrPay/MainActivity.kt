@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,90 +31,100 @@ class MainActivity : ComponentActivity() {
             val dao = getDao(this.applicationContext)
             val productList = dao.getAllFlow().collectAsState(initial = emptyList())
 
-            LaunchedEffect(Unit) {
-                launch(Dispatchers.IO) {
-                    dao.insertProduct(
-                        ProductValue(
-                            "BADGE_45",
-                            2000,
-                            getString(R.string.shop_page_product_badge45),
-                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.badge_45),
-                            10,
-                            ProductCategoryValueImpl.Badge.name
-                        )
-                    )
-                    dao.insertProduct(
-                        ProductValue(
-                            "BADGE_9",
-                            2000,
-                            getString(R.string.shop_page_product_badge9),
-                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.badge_9),
-                            10,
-                            ProductCategoryValueImpl.Badge.name
-                        )
-                    )
-                    dao.insertProduct(
-                        ProductValue(
-                            "BADGE_11",
-                            2000,
-                            getString(R.string.shop_page_product_badge11),
-                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.badge_11),
-                            10,
-                            ProductCategoryValueImpl.Badge.name
-                        )
-                    )
-                    dao.insertProduct(
-                        ProductValue(
-                            "BADGE_416",
-                            2000,
-                            getString(R.string.shop_page_product_badge416),
-                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.badge_416),
-                            10,
-                            ProductCategoryValueImpl.Badge.name
-                        )
-                    )
-                    dao.insertProduct(
-                        ProductValue(
-                            "POST_CARD_SET_MINI404",
-                            1000,
-                            getString(R.string.shop_page_product_post_card_set_mini404),
-                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.post_card_set_mini404),
-                            30,
-                            ProductCategoryValueImpl.POSTCARD.name
-                        )
-                    )
-                    dao.insertProduct(
-                        ProductValue(
-                            "POST_CARD_CAFE94",
-                            1000,
-                            getString(R.string.shop_page_product_post_card_cafe94),
-                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.post_card_cafe94),
-                            30,
-                            ProductCategoryValueImpl.POSTCARD.name
-                        )
-                    )
-                    dao.insertProduct(
-                        ProductValue(
-                            "PHOTO_CARD_SET_9415",
-                            2000,
-                            getString(R.string.shop_page_product_photo_card_set_9415),
-                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.photo_card_set_9415),
-                            400,
-                            ProductCategoryValueImpl.PhotoCard.name
-                        )
-                    )
-                    dao.insertProduct(
-                        ProductValue(
-                            "SCROLL_CAFE94",
-                            10000,
-                            getString(R.string.shop_page_product_scroll_cafe94),
-                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.scroll_cafe94),
-                            10,
-                            ProductCategoryValueImpl.SCROLL.name
-                        )
-                    )
+            val scope = rememberCoroutineScope()
+            val finishOrder: (Map<ProductValue, Int>, () -> Unit) -> Unit = { orderMap, onFinished ->
+                scope.launch(Dispatchers.IO) {
+                    orderMap.entries.forEach { (product, count) ->
+                        dao.insertProduct(product.copy(stock = product.stock - count))
+                    }
+                    onFinished()
                 }
             }
+
+//            LaunchedEffect(Unit) {
+//                launch(Dispatchers.IO) {
+//                    dao.insertProduct(
+//                        ProductValue(
+//                            "BADGE_45",
+//                            2000,
+//                            getString(R.string.shop_page_product_badge45),
+//                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.badge_45),
+//                            10,
+//                            ProductCategoryValueImpl.Badge.name
+//                        )
+//                    )
+//                    dao.insertProduct(
+//                        ProductValue(
+//                            "BADGE_9",
+//                            2000,
+//                            getString(R.string.shop_page_product_badge9),
+//                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.badge_9),
+//                            10,
+//                            ProductCategoryValueImpl.Badge.name
+//                        )
+//                    )
+//                    dao.insertProduct(
+//                        ProductValue(
+//                            "BADGE_11",
+//                            2000,
+//                            getString(R.string.shop_page_product_badge11),
+//                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.badge_11),
+//                            10,
+//                            ProductCategoryValueImpl.Badge.name
+//                        )
+//                    )
+//                    dao.insertProduct(
+//                        ProductValue(
+//                            "BADGE_416",
+//                            2000,
+//                            getString(R.string.shop_page_product_badge416),
+//                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.badge_416),
+//                            10,
+//                            ProductCategoryValueImpl.Badge.name
+//                        )
+//                    )
+//                    dao.insertProduct(
+//                        ProductValue(
+//                            "POST_CARD_SET_MINI404",
+//                            1000,
+//                            getString(R.string.shop_page_product_post_card_set_mini404),
+//                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.post_card_set_mini404),
+//                            30,
+//                            ProductCategoryValueImpl.POSTCARD.name
+//                        )
+//                    )
+//                    dao.insertProduct(
+//                        ProductValue(
+//                            "POST_CARD_CAFE94",
+//                            1000,
+//                            getString(R.string.shop_page_product_post_card_cafe94),
+//                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.post_card_cafe94),
+//                            30,
+//                            ProductCategoryValueImpl.POSTCARD.name
+//                        )
+//                    )
+//                    dao.insertProduct(
+//                        ProductValue(
+//                            "PHOTO_CARD_SET_9415",
+//                            2000,
+//                            getString(R.string.shop_page_product_photo_card_set_9415),
+//                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.photo_card_set_9415),
+//                            400,
+//                            ProductCategoryValueImpl.PhotoCard.name
+//                        )
+//                    )
+//                    dao.insertProduct(
+//                        ProductValue(
+//                            "SCROLL_CAFE94",
+//                            10000,
+//                            getString(R.string.shop_page_product_scroll_cafe94),
+//                            getBase64FromDrawableRes(resources = resources, drawableRes = R.drawable.scroll_cafe94),
+//                            10,
+//                            ProductCategoryValueImpl.SCROLL.name
+//                        )
+//                    )
+//                }
+//            }
 
 
             EasyQrPayTheme {
@@ -121,7 +132,8 @@ class MainActivity : ComponentActivity() {
                 NavHost(startDestination = "shop", navController = navController) {
                     composable("shop") {
                         ShopPage(
-                            productList = productList.value,
+                            productList = productList,
+                            finishOrder = finishOrder
                         )
                     }
                 }

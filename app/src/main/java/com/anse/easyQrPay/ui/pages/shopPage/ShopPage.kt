@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.anse.easyQrPay.R
 import com.anse.easyQrPay.models.product.ProductCategoryValue
 import com.anse.easyQrPay.models.product.ProductValue
@@ -91,7 +94,8 @@ enum class ProductCategoryValueImpl(
 @Composable
 fun ShopPage(
     categoryList: List<ProductCategoryValue> = ProductCategoryValueImpl.entries,
-    productList: List<ProductValue>,
+    productList: State<List<ProductValue>>,
+    finishOrder: (Map<ProductValue, Int>, () -> Unit) -> Unit,
 //    navigateToQRPage: () -> Unit,
 ) {
     val selectedCategory = rememberSaveable { mutableStateOf<ProductCategoryValue?>(null) }
@@ -102,15 +106,70 @@ fun ShopPage(
         }
     }
 
-    val selectedProductList = rememberSaveable { mutableStateOf(productList) }
-    LaunchedEffect(key1 = selectedCategory.value) {
-        selectedCategory.value.let { selectedCategory ->
-            if (selectedCategory == null) selectedProductList.value = productList
-            else selectedProductList.value = productList.filter { ProductCategoryValueImpl.fromName(it.category) == selectedCategory }
+    val selectedProductList = remember(key1 = selectedCategory.value) {
+        derivedStateOf {
+            selectedCategory.value.let { selectedCategory ->
+                if (selectedCategory == null) productList.value
+                else productList.value.filter { ProductCategoryValueImpl.fromName(it.category) == selectedCategory }
+            }
         }
     }
 
     val isCalculating = rememberSaveable { mutableStateOf(false) }
+
+    val showFinishSellingDialog = rememberSaveable { mutableStateOf(false) }
+    if (showFinishSellingDialog.value) {
+        Dialog(onDismissRequest = { showFinishSellingDialog.value = false }) {
+            Surface(
+                color = Color.White,
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Column(Modifier.padding(vertical = 20.dp, horizontal = 27.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        stringResource(R.string.shop_page_finish_selling_dialog_title),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        stringResource(R.string.shop_page_finish_selling_dialog_message),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(Modifier.height(15.dp))
+                    AnseButton(
+                        onClick = {
+                            finishOrder(
+                                shoppingList
+                            ) {
+                                shoppingList.clear()
+                                isCalculating.value = false
+                                showFinishSellingDialog.value = false
+                                selectedCategory.value = null
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        buttonStyle = AnseButtonStyle.newStyle(
+                            shape = RoundedCornerShape(20.dp),
+                            colors = AnseButtonColors(
+                                contentColor = Color.Black,
+                                containerColor = Color(0xFFABDE82),
+                            ),
+                            contentPadding = PaddingValues(vertical = 20.dp),
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.shop_page_order_finish),
+                            modifier = Modifier.align(Alignment.Center),
+                            color = it,
+                            fontSize = 28.sp,
+                            lineHeight = 28.sp,
+                        )
+                    }
+                }
+            }
+        }
+    }
 
 
     BackHandler {
@@ -181,7 +240,11 @@ fun ShopPage(
                     .padding(horizontal = 25.dp), verticalArrangement = Arrangement.Bottom
             ) {
                 Spacer(Modifier.height(42.dp))
-                Text(stringResource(R.string.shop_page_shopping_list_title), fontSize = 32.sp, lineHeight = 38.sp)
+                Text(stringResource(R.string.shop_page_shopping_list_title), fontSize = 32.sp, lineHeight = 38.sp, modifier = Modifier.clickable {
+                    if (isCalculating.value) {
+                        showFinishSellingDialog.value = true
+                    }
+                })
                 Spacer(Modifier.height(30.dp))
                 Box(
                     Modifier
