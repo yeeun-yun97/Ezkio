@@ -440,81 +440,100 @@ fun ShoppingItem(
     count: Int,
     setItemCount: (Int) -> Unit,
 ) {
-    Row(Modifier.height(IntrinsicSize.Max)) {
-        Surface(
-            shape = RoundedCornerShape(10.dp),
-            shadowElevation = 4.dp,
-            modifier = Modifier
-                .size(100.dp)
-                .aspectRatio(1f, true)
-        ) {
-            Image(
-                painter = painterResource(id = product.imageRes),
-                contentDescription = "product_image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.aspectRatio(1f, matchHeightConstraintsFirst = false),
-            )
-        }
-        Column(
+    Surface(
+        shadowElevation = 4.dp,
+        shape = RoundedCornerShape(15.dp),
+    ) {
+        Row(
             Modifier
-                .weight(1f)
-                .fillMaxHeight()
+                .height(IntrinsicSize.Max)
+                .padding(15.dp)
         ) {
-            Text(
-                stringResource(product.nameRes)
-            )
-            Spacer(Modifier.height(5.dp))
-            Text(
-                product.price.toString()
-            )
-            Row() {
-                Text(
-                    text = count.toString()
+            Surface(
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier
+                    .size(100.dp)
+                    .aspectRatio(1f, true)
+            ) {
+                Image(
+                    painter = BitmapPainter(StringToBitmap(product.image)!!),
+                    contentDescription = "product_image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.aspectRatio(1f, matchHeightConstraintsFirst = false),
                 )
-                Spacer(Modifier.width(10.dp))
-                AnseButton(
-                    onClick = { setItemCount(count - 1) },
-                    buttonStyle = AnseButtonStyle.newStyle(
-                        colors = AnseButtonColors(
-                            contentColor = Color(0xFF7D7D7D),
-                            containerColor = Color(0xFFF5F5F5),
+            }
+            Spacer(Modifier.width(15.dp))
+            Column(
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            ) {
+                Text(
+                    product.name
+                )
+                Spacer(Modifier.height(5.dp))
+                Text(
+                    product.price.toString()
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = count.toString()
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    AnseButton(
+                        onClick = { setItemCount(count - 1) },
+                        buttonStyle = AnseButtonStyle.newStyle(
+                            colors = AnseButtonColors(
+                                contentColor = Color(0xFF7D7D7D),
+                                containerColor = Color(0xFFF5F5F5),
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            border = null,
+                            contentPadding = PaddingValues(10.dp),
                         ),
-                        shape = RoundedCornerShape(10.dp),
-                        border = null,
-                        contentPadding = PaddingValues(10.dp),
-                    ),
-                    modifier = Modifier.size(36.dp)
-                ) { Text("-", modifier = Modifier.align(Alignment.Center), color = it) }
-                Spacer(Modifier.width(4.dp))
-                AnseButton(
-                    onClick = { setItemCount(count + 1) },
-                    buttonStyle = AnseButtonStyle.newStyle(
-                        colors = AnseButtonColors(
-                            contentColor = Color(0xFF7D7D7D),
-                            containerColor = Color(0xFFF5F5F5),
+                        modifier = Modifier.size(36.dp)
+                    ) { Text("-", modifier = Modifier.align(Alignment.Center), color = it) }
+                    Spacer(Modifier.width(4.dp))
+                    AnseButton(
+                        onClick = { setItemCount(count + 1) },
+                        buttonStyle = AnseButtonStyle.newStyle(
+                            colors = AnseButtonColors(
+                                contentColor = Color(0xFF7D7D7D),
+                                containerColor = Color(0xFFF5F5F5),
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            border = null,
+                            contentPadding = PaddingValues(10.dp),
                         ),
-                        shape = RoundedCornerShape(10.dp),
-                        border = null,
-                        contentPadding = PaddingValues(10.dp),
+                        modifier = Modifier.size(36.dp)
+                    ) { Text("+", modifier = Modifier.align(Alignment.Center), color = it) }
+                }
+            }
+            AnseButton(
+                onClick = { setItemCount(0) },
+                modifier = Modifier.fillMaxHeight(),
+                buttonStyle = AnseButtonStyle.newStyle(
+                    colors = AnseButtonColors(
+                        contentColor = Color(0xFF757575),
+                        containerColor = Color(0xFFE8E8E8),
                     ),
-                    modifier = Modifier.size(36.dp)
-                ) { Text("+", modifier = Modifier.align(Alignment.Center), color = it) }
+                    shape = RectangleShape,
+                    border = null,
+                    contentPadding = PaddingValues(10.dp),
+                )
+            ) {
+                Text("삭제", modifier = Modifier.align(Alignment.Center))
             }
         }
-        AnseButton(
-            onClick = { setItemCount(0) },
-            modifier = Modifier.fillMaxHeight(),
-            buttonStyle = AnseButtonStyle.newStyle(
-                colors = AnseButtonColors(
-                    contentColor = Color(0xFF757575),
-                    containerColor = Color(0xFFE8E8E8),
-                ),
-                shape = RectangleShape,
-                border = null,
-                contentPadding = PaddingValues(10.dp),
-            )
-        ) {
-            Text("삭제", modifier = Modifier.align(Alignment.Center))
-        }
+    }
+}
+
+fun StringToBitmap(encodedString: String?): ImageBitmap? {
+    return try {
+        val encodeByte: ByteArray = Base64.decode(encodedString, Base64.DEFAULT)
+        BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.size).asImageBitmap()
+    } catch (e: Exception) {
+        e.message
+        null
     }
 }
