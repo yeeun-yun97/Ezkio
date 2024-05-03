@@ -61,6 +61,7 @@ import com.anse.easyQrPay.ui.pages.qrPage.QRPage
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
+import kotlin.math.min
 
 
 enum class ProductCategoryValueImpl(
@@ -85,7 +86,6 @@ enum class ProductCategoryValueImpl(
         }
     }
 }
-
 
 
 @Composable
@@ -155,7 +155,10 @@ fun ShopPage(
                         itemsIndexed(selectedProductList.value) { index, item ->
                             ProductItem(
                                 product = item,
-                                onClick = { shoppingList[item] = (shoppingList[item] ?: 0) + 1 },
+                                onClick = {
+                                    shoppingList[item] = min((shoppingList[item] ?: 0) + 1, item.stock)
+                                },
+                                cartItemCount = shoppingList[item] ?: 0
                             )
                         }
                     }
@@ -196,7 +199,7 @@ fun ShopPage(
                                 count = item.second,
                                 setItemCount = {
                                     if (it <= 0) shoppingList.remove(item.first)
-                                    else shoppingList[item.first] = it
+                                    else shoppingList[item.first] = min(it, item.first.stock)
                                 }
                             )
                         }
@@ -302,8 +305,9 @@ fun CategoryItem(
 fun ProductItem(
     product: ProductValue,
     onClick: () -> Unit,
+    cartItemCount: Int,
 ) {
-    val enabled = rememberUpdatedState(newValue = product.stock > 0)
+    val enabled = rememberUpdatedState(newValue = (product.stock - cartItemCount) > 0)
     Box {
         AnseButton(
             enabled = enabled.value,
