@@ -29,4 +29,5 @@
     <string name="shop_page_product_scroll_cafe94">카페 구사 족자봉</string>
     <string name="shop_page_product_photo_card_set_9415">농농 9415 포토카드 세트</string>
     <string name="shop_page_order_cancel">주문 취소하기</string>
+    <string name="shop_page_shopping_list_empty">구매할 물건을 왼쪽 패널에서 터치하여 담아보세요!</string>
 </resources>

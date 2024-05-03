@@ -248,18 +248,33 @@ fun ShopPage(
                 Spacer(Modifier.height(42.dp))
                 Text(stringResource(R.string.shop_page_shopping_list_title), fontSize = 32.sp, lineHeight = 38.sp)
                 Spacer(Modifier.height(30.dp))
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
-                    itemsIndexed(shoppingList.toList()) { index, item ->
-                        ShoppingItem(
-                            product = item.first,
-                            count = item.second,
-                            setItemCount = {
-                                if (it <= 0) shoppingList.remove(item.first)
-                                else shoppingList[item.first] = it
-                            }
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        itemsIndexed(shoppingList.toList()) { index, item ->
+                            ShoppingItem(
+                                product = item.first,
+                                count = item.second,
+                                setItemCount = {
+                                    if (it <= 0) shoppingList.remove(item.first)
+                                    else shoppingList[item.first] = it
+                                }
+                            )
+                        }
+                    }
+                    if (shoppingList.isEmpty()) {
+                        Text(
+                            stringResource(R.string.shop_page_shopping_list_empty),
+                            fontSize = 20.sp,
+                            lineHeight = 20.sp,
+                            modifier = Modifier.align(Alignment.Center),
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
