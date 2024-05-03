@@ -200,7 +200,8 @@ fun ShopPage(
                                 setItemCount = {
                                     if (it <= 0) shoppingList.remove(item.first)
                                     else shoppingList[item.first] = min(it, item.first.stock)
-                                }
+                                },
+                                editEnabled = !isCalculating.value
                             )
                         }
                     }
@@ -374,6 +375,7 @@ fun ShoppingItem(
     product: ProductValue,
     count: Int,
     setItemCount: (Int) -> Unit,
+    editEnabled: Boolean,
 ) {
     Surface(
         shadowElevation = 4.dp,
@@ -382,7 +384,8 @@ fun ShoppingItem(
         Row(
             Modifier
                 .height(IntrinsicSize.Max)
-                .padding(15.dp)
+                .padding(15.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
                 shape = RoundedCornerShape(10.dp),
@@ -401,63 +404,76 @@ fun ShoppingItem(
             Column(
                 Modifier
                     .weight(1f)
-                    .fillMaxHeight()
             ) {
                 Text(
-                    product.name
+                    product.name,
+                    fontSize = 12.sp
                 )
                 Spacer(Modifier.height(5.dp))
                 Text(
-                    product.price.toString()
+                    product.price.toString(),
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(IntrinsicSize.Max)) {
                     Text(
-                        text = count.toString()
+                        text = count.toString(),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
                     )
-                    Spacer(Modifier.width(10.dp))
-                    AnseButton(
-                        onClick = { setItemCount(count - 1) },
-                        buttonStyle = AnseButtonStyle.newStyle(
-                            colors = AnseButtonColors(
-                                contentColor = Color(0xFF7D7D7D),
-                                containerColor = Color(0xFFF5F5F5),
+                    if (editEnabled) {
+                        Spacer(Modifier.width(10.dp))
+                        AnseButton(
+                            onClick = { setItemCount(count - 1) },
+                            buttonStyle = AnseButtonStyle.newStyle(
+                                colors = AnseButtonColors(
+                                    contentColor = Color(0xFF7D7D7D),
+                                    containerColor = Color(0xFFF5F5F5),
+                                ),
+                                shape = RoundedCornerShape(10.dp),
+                                border = null,
+                                contentPadding = PaddingValues(10.dp),
                             ),
-                            shape = RoundedCornerShape(10.dp),
-                            border = null,
-                            contentPadding = PaddingValues(10.dp),
-                        ),
-                        modifier = Modifier.size(36.dp)
-                    ) { Text("-", modifier = Modifier.align(Alignment.Center), color = it) }
-                    Spacer(Modifier.width(4.dp))
-                    AnseButton(
-                        onClick = { setItemCount(count + 1) },
-                        buttonStyle = AnseButtonStyle.newStyle(
-                            colors = AnseButtonColors(
-                                contentColor = Color(0xFF7D7D7D),
-                                containerColor = Color(0xFFF5F5F5),
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .aspectRatio(1f, true)
+                        ) { Text("-", modifier = Modifier.align(Alignment.Center), color = it) }
+                        Spacer(Modifier.width(8.dp))
+                        AnseButton(
+                            onClick = { setItemCount(count + 1) },
+                            buttonStyle = AnseButtonStyle.newStyle(
+                                colors = AnseButtonColors(
+                                    contentColor = Color(0xFF7D7D7D),
+                                    containerColor = Color(0xFFF5F5F5),
+                                ),
+                                shape = RoundedCornerShape(10.dp),
+                                border = null,
+                                contentPadding = PaddingValues(10.dp),
                             ),
-                            shape = RoundedCornerShape(10.dp),
-                            border = null,
-                            contentPadding = PaddingValues(10.dp),
-                        ),
-                        modifier = Modifier.size(36.dp)
-                    ) { Text("+", modifier = Modifier.align(Alignment.Center), color = it) }
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .aspectRatio(1f, true)
+                        ) { Text("+", modifier = Modifier.align(Alignment.Center), color = it) }
+                    }
                 }
             }
-            AnseButton(
-                onClick = { setItemCount(0) },
-                modifier = Modifier.fillMaxHeight(),
-                buttonStyle = AnseButtonStyle.newStyle(
-                    colors = AnseButtonColors(
-                        contentColor = Color(0xFF757575),
-                        containerColor = Color(0xFFE8E8E8),
-                    ),
-                    shape = RectangleShape,
-                    border = null,
-                    contentPadding = PaddingValues(10.dp),
-                )
-            ) {
-                Text("삭제", modifier = Modifier.align(Alignment.Center))
+            if (editEnabled) {
+                Spacer(Modifier.width(10.dp))
+                AnseButton(
+                    onClick = { setItemCount(0) },
+                    modifier = Modifier.fillMaxHeight(),
+                    buttonStyle = AnseButtonStyle.newStyle(
+                        colors = AnseButtonColors(
+                            contentColor = Color(0xFF757575),
+                            containerColor = Color(0xFFE8E8E8),
+                        ),
+                        shape = RectangleShape,
+                        border = null,
+                        contentPadding = PaddingValues(10.dp),
+                    )
+                ) {
+                    Text("삭제", modifier = Modifier.align(Alignment.Center))
+                }
             }
         }
     }
