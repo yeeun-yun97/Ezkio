@@ -77,8 +77,8 @@ fun QRPage(
             Text(
                 stringResource(R.string.qr_page_title),
                 style = LocalTextStyle.current.copy(
-                    fontSize = 50.sp,
-                    lineHeight = 64.sp,
+                    fontSize = 46.sp,
+                    lineHeight = 58.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
@@ -96,8 +96,8 @@ fun QRPage(
                     )
                 },
                 style = LocalTextStyle.current.copy(
-                    fontSize = 50.sp,
-                    lineHeight = 64.sp,
+                    fontSize = 47.sp,
+                    lineHeight = 55.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
                 )
@@ -116,7 +116,7 @@ fun QRPage(
                     Text(
                         stringResource(id = R.string.qr_page_bank_account_title),
                         style = LocalTextStyle.current.copy(
-                            fontSize = 35.sp,
+                            fontSize = 30.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
@@ -125,14 +125,14 @@ fun QRPage(
                     Text(
                         "${bankAccount.bankName} ${bankAccount.accountHolderName}",
                         style = LocalTextStyle.current.copy(
-                            fontSize = 40.sp,
+                            fontSize = 36.sp,
                             textAlign = TextAlign.Center
                         )
                     )
                     Text(
                         bankAccount.accountNumber,
                         style = LocalTextStyle.current.copy(
-                            fontSize = 70.sp,
+                            fontSize = 60.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
@@ -167,8 +167,8 @@ private fun QRItem(
         Text(
             name,
             style = LocalTextStyle.current.copy(
-                fontSize = 40.sp,
-                lineHeight = 40.sp,
+                fontSize = 32.sp,
+                lineHeight = 36.sp,
                 textAlign = TextAlign.Center
             )
         )
