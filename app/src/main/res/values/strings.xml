@@ -3,7 +3,7 @@
     <string name="qr_page_title">이용해 주셔서 감사합니다!!!</string>
     <string name="qr_page_price_message_prefix">"총 "</string>
     <string name="qr_page_price_message_suffix">원 입니다!</string>
-    <string name="qr_page_toss_qr_title">토스 송금 QR이에요.\\n(편함)</string>
+    <string name="qr_page_toss_qr_title">토스 송금 QR이에요.\n(편함)</string>
     <string name="qr_page_bank_account_title">계좌 정보</string>
     <string name="shop_page_category_all">전체</string>
     <string name="shop_page_category_badge">캔뱃지</string>
@@ -28,4 +28,5 @@
     <string name="shop_page_product_post_card_set_mini404">미니 404 엽서세트</string>
     <string name="shop_page_product_scroll_cafe94">카페 구사 족자봉</string>
     <string name="shop_page_product_photo_card_set_9415">농농 9415 포토카드 세트</string>
+    <string name="shop_page_order_cancel">주문 취소하기</string>
 </resources>

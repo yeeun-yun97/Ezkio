@@ -1,5 +1,6 @@
 package com.anse.easyQrPay.ui.pages.qrPage
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.anse.easyQrPay.R
 import com.anse.easyQrPay.core.models.BankAccountValue
 import com.anse.easyQrPay.core.models.accountNumberNoDashOrSpace
+import com.anse.easyQrPay.core.models.bankNameUrlEncoded
 import com.anse.easyQrPay.ui.theme.EasyQrPayTheme
 
 @Preview(device = "spec:width=1280dp,height=800dp,dpi=240")
@@ -39,7 +42,7 @@ fun QRPagePreview() {
     EasyQrPayTheme {
         QRPage(
             price = 1000,
-            bankAccount = exampleBankAccount
+            bankAccount = exampleBankAccount,
         )
     }
 }
@@ -52,93 +55,96 @@ val exampleBankAccount = BankAccountValue(
 
 @Composable
 fun QRPage(
-    price: Int = 9000,
-    bankAccount: BankAccountValue=exampleBankAccount,
+    price: Int,
+    bankAccount: BankAccountValue = exampleBankAccount,
 ) {
+    val url = "supertoss://send?amount=${price}&bank=${bankAccount.bankNameUrlEncoded()}&accountNo=${bankAccount.accountNumberNoDashOrSpace()}&origin=qr"
+    Log.d("QRUrl", "$url")
     val bitmapToss: ImageBitmap = remember(price) {
         net.glxn.qrgen.android.QRCode
-            .from("supertoss://send?amount=${price}&bank=${bankAccount.bankName}&accountNo=${bankAccount.accountNumberNoDashOrSpace()}&origin=qr")
+            .from(url)
             .withSize(300, 300)
             .bitmap()
             .asImageBitmap()
     }
 
-    Column(
-        Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            stringResource(R.string.qr_page_title),
-            style = LocalTextStyle.current.copy(
-                fontSize = 50.sp,
-                lineHeight = 64.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-        )
-        Text(
-            buildAnnotatedString {
-                append(
-                    stringResource(id = R.string.qr_page_price_message_prefix)
-                )
-                pushStyle(style = SpanStyle(fontSize = 150.sp))
-                append(price.toString())
-                pop()
-                append(
-                    stringResource(id = R.string.qr_page_price_message_suffix)
-                )
-            },
-            style = LocalTextStyle.current.copy(
-                fontSize = 50.sp,
-                lineHeight = 64.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-        )
-        Spacer(Modifier.height(15.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(50.dp)
+    Surface(color = Color(0xFFE9E9E9)) {
+        Column(
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            QRItem(
-                stringResource(id = R.string.qr_page_toss_qr_title),
-                bitmapToss,
-                size = 300.dp
+            Text(
+                stringResource(R.string.qr_page_title),
+                style = LocalTextStyle.current.copy(
+                    fontSize = 50.sp,
+                    lineHeight = 64.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
             )
-            Column {
-                Text(
-                    stringResource(id = R.string.qr_page_bank_account_title),
-                    style = LocalTextStyle.current.copy(
-                        fontSize = 35.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
+            Text(
+                buildAnnotatedString {
+                    append(
+                        stringResource(id = R.string.qr_page_price_message_prefix)
                     )
-                )
-                Spacer(Modifier.height(15.dp))
-                Text(
-                    "${bankAccount.bankName} ${bankAccount.accountHolderName}",
-                    style = LocalTextStyle.current.copy(
-                        fontSize = 40.sp,
-                        textAlign = TextAlign.Center
+                    pushStyle(style = SpanStyle(fontSize = 150.sp))
+                    append(price.toString())
+                    pop()
+                    append(
+                        stringResource(id = R.string.qr_page_price_message_suffix)
                     )
+                },
+                style = LocalTextStyle.current.copy(
+                    fontSize = 50.sp,
+                    lineHeight = 64.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
                 )
-                Text(
-                    bankAccount.accountNumber,
-                    style = LocalTextStyle.current.copy(
-                        fontSize = 70.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
+            )
+            Spacer(Modifier.height(15.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(50.dp)
+            ) {
+                QRItem(
+                    stringResource(id = R.string.qr_page_toss_qr_title),
+                    bitmapToss,
+                    size = 300.dp
+                )
+                Column {
+                    Text(
+                        stringResource(id = R.string.qr_page_bank_account_title),
+                        style = LocalTextStyle.current.copy(
+                            fontSize = 35.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
                     )
-                )
+                    Spacer(Modifier.height(15.dp))
+                    Text(
+                        "${bankAccount.bankName} ${bankAccount.accountHolderName}",
+                        style = LocalTextStyle.current.copy(
+                            fontSize = 40.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                    Text(
+                        bankAccount.accountNumber,
+                        style = LocalTextStyle.current.copy(
+                            fontSize = 70.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                }
             }
-
         }
     }
 }
 
 @Composable
-fun QRItem(
+private fun QRItem(
     name: String,
     bitmap: ImageBitmap,
     size: Dp,

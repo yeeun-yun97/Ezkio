@@ -191,7 +191,7 @@ fun ShopPage(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight(),
-            color = Color(0xFF3C3C3C)
+            color = Color(0xFFE9E9E9)
         ) {
             Column {
                 if (!isCalculating.value) {
@@ -236,7 +236,7 @@ fun ShopPage(
         }
         Surface(
             modifier = Modifier
-                .width(350.dp)
+                .width(400.dp)
                 .fillMaxHeight(),
             color = Color.White,
         ) {
@@ -282,6 +282,30 @@ fun ShopPage(
                         Text(
                             text = stringResource(R.string.shop_page_order_start),
                             modifier = Modifier.align(Alignment.Center),
+                            color = it,
+                            fontSize = 28.sp,
+                            lineHeight = 28.sp,
+                        )
+                    }
+                } else if (isCalculating.value) {
+                    AnseButton(
+                        onClick = {
+                            isCalculating.value = false
+                        },
+                        buttonStyle = AnseButtonStyle.newStyle(
+                            shape = RoundedCornerShape(20.dp),
+                            colors = AnseButtonColors(
+                                contentColor = Color.Black,
+                                containerColor = Color(0xFFA8A8A8),
+                            ),
+                            contentPadding = PaddingValues(vertical = 20.dp),
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = stringResource(R.string.shop_page_order_cancel),
+                            modifier = Modifier.align(Alignment.Center),
+                            color = it,
                             fontSize = 28.sp,
                             lineHeight = 28.sp,
                         )
