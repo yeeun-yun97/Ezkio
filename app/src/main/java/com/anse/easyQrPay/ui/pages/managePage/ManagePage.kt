@@ -21,14 +21,11 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.anse.easyQrPay.R
 import com.anse.easyQrPay.models.product.ProductCategoryValue
-import com.anse.easyQrPay.models.product.ProductValue
+import com.anse.easyQrPay.models.product.Product
 import com.anse.easyQrPay.ui.item.CategoryItem
 import com.anse.easyQrPay.ui.item.ProductItem
 import com.anse.easyQrPay.ui.pages.shopPage.ProductCategoryValueImpl
@@ -62,13 +59,13 @@ fun ManagePagePreview() {
         ManagePage(
             productList =
                     listOf(
-                        ProductValue(
+                        Product(
                             productCode = "1",
                             price = 1000,
                             name = "product1",
                             image = "",
                             stock = 10,
-                            category = "category1"
+                            categoryCode = "category1"
                         )
                     )
 
@@ -85,7 +82,7 @@ fun ManagePagePreview() {
 @Composable
 fun ManagePage(
     categoryList: List<ProductCategoryValue> = ProductCategoryValueImpl.entries,
-    productList: List<ProductValue>,
+    productList: List<Product>,
     addCategory: () -> Unit,
     addProduct: () -> Unit,
     navigateToSetting: () -> Unit,

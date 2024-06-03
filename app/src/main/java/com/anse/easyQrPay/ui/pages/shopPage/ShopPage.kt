@@ -18,32 +18,26 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -51,7 +45,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -60,7 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.anse.easyQrPay.R
 import com.anse.easyQrPay.models.product.ProductCategoryValue
-import com.anse.easyQrPay.models.product.ProductValue
+import com.anse.easyQrPay.models.product.Product
 import com.anse.easyQrPay.ui.item.CategoryItem
 import com.anse.easyQrPay.ui.item.ProductItem
 import com.anse.easyQrPay.ui.pages.qrPage.QRPage
@@ -97,12 +90,12 @@ enum class ProductCategoryValueImpl(
 @Composable
 fun ShopPage(
     categoryList: List<ProductCategoryValue> = ProductCategoryValueImpl.entries,
-    productList: State<List<ProductValue>>,
-    finishOrder: (Map<ProductValue, Int>, () -> Unit) -> Unit,
+    productList: State<List<Product>>,
+    finishOrder: (Map<Product, Int>, () -> Unit) -> Unit,
 //    navigateToQRPage: () -> Unit,
 ) {
     val selectedCategory = rememberSaveable { mutableStateOf<ProductCategoryValue?>(null) }
-    val shoppingList = remember { mutableStateMapOf<ProductValue, Int>() }
+    val shoppingList = remember { mutableStateMapOf<Product, Int>() }
     val shoppingPrice = remember {
         derivedStateOf {
             shoppingList.entries.map { (product, amount) -> product.price * amount }.sum()
@@ -113,7 +106,7 @@ fun ShopPage(
         derivedStateOf {
             selectedCategory.value.let { selectedCategory ->
                 if (selectedCategory == null) productList.value
-                else productList.value.filter { ProductCategoryValueImpl.fromName(it.category) == selectedCategory }
+                else productList.value.filter { ProductCategoryValueImpl.fromName(it.categoryCode) == selectedCategory }
             }
         }
     }
@@ -218,7 +211,7 @@ fun ShopPage(
                             ProductItem(
                                 product = item,
                                 onClick = {
-                                    shoppingList[item] = min((shoppingList[item] ?: 0) + 1, item.stock)
+                                    shoppingList[item] = min((shoppingList[item] ?: 0) + 1, item.stock ?: Int.MAX_VALUE)
                                 },
                                 cartItemCount = shoppingList[item] ?: 0
                             )
@@ -265,7 +258,7 @@ fun ShopPage(
                                 count = item.second,
                                 setItemCount = {
                                     if (it <= 0) shoppingList.remove(item.first)
-                                    else shoppingList[item.first] = min(it, item.first.stock)
+                                    else shoppingList[item.first] = min(it, item.first.stock?: Int.MAX_VALUE)
                                 },
                                 editEnabled = !isCalculating.value
                             )
@@ -338,7 +331,7 @@ fun ShopPage(
 
 @Composable
 fun ShoppingItem(
-    product: ProductValue,
+    product: Product,
     count: Int,
     setItemCount: (Int) -> Unit,
     editEnabled: Boolean,

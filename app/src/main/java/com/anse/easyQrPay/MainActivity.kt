@@ -8,15 +8,13 @@ import android.os.Bundle
 import android.util.Base64
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
-import com.anse.easyQrPay.models.product.ProductValue
-import com.anse.easyQrPay.ui.pages.shopPage.ProductCategoryValueImpl
+import com.anse.easyQrPay.models.product.Product
 import com.anse.easyQrPay.ui.pages.shopPage.ShopPage
 import com.anse.easyQrPay.ui.theme.EasyQrPayTheme
 import kotlinx.coroutines.Dispatchers
@@ -32,10 +30,12 @@ class MainActivity : ComponentActivity() {
             val productList = dao.getAllFlow().collectAsState(initial = emptyList())
 
             val scope = rememberCoroutineScope()
-            val finishOrder: (Map<ProductValue, Int>, () -> Unit) -> Unit = { orderMap, onFinished ->
+            val finishOrder: (Map<Product, Int>, () -> Unit) -> Unit = { orderMap, onFinished ->
                 scope.launch(Dispatchers.IO) {
                     orderMap.entries.forEach { (product, count) ->
-                        dao.insertProduct(product.copy(stock = product.stock - count))
+                        if (product.stock != null) {
+                            dao.insertProduct(product.copy(stock = product.stock - count))
+                        }
                     }
                     onFinished()
                 }

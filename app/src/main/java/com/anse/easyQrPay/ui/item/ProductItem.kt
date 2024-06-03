@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.anse.easyQrPay.R
-import com.anse.easyQrPay.models.product.ProductValue
+import com.anse.easyQrPay.models.product.Product
 import com.anse.easyQrPay.ui.pages.shopPage.StringToBitmap
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
@@ -33,11 +33,11 @@ import com.anse.uikit.components.button.AnseButtonStyle
 
 @Composable
 fun ProductItem(
-    product: ProductValue,
+    product: Product,
     onClick: () -> Unit,
     cartItemCount: Int,
 ) {
-    val enabled = rememberUpdatedState(newValue = (product.stock - cartItemCount) > 0)
+    val enabled = rememberUpdatedState(newValue = if (product.stock == null) true else (product.stock - cartItemCount) > 0)
     Box {
         AnseButton(
             enabled = enabled.value,
@@ -54,9 +54,9 @@ fun ProductItem(
         ) {
             Column(Modifier.fillMaxWidth()) {
                 Image(
-                    painter = StringToBitmap(product.image)?.let{
+                    painter = StringToBitmap(product.image)?.let {
                         BitmapPainter(image = it)
-                    }?: painterResource(R.drawable.ic_launcher_background),
+                    } ?: painterResource(R.drawable.ic_launcher_background),
                     contentDescription = "product_image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.aspectRatio(1f, matchHeightConstraintsFirst = false),
