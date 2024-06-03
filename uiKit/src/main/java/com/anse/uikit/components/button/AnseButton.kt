@@ -1,6 +1,7 @@
 package com.anse.uikit.components.button
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -76,7 +77,7 @@ data class AnseButtonColors(
 @Composable
 fun AnseButton(
     onClick: (Boolean) -> Unit,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     buttonStyle: AnseButtonStyle,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -102,5 +103,22 @@ fun AnseButton(
         ) {
             content(contentColor.value)
         }
+    }
+}
+
+@Composable
+fun AnseButtonNoStyle(
+    onClick: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .then(modifier)
+            .clickable { onClick(enabled) }
+            .semantics { role = Role.Button },
+    ) {
+        content()
     }
 }

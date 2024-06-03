@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -60,6 +61,8 @@ import androidx.compose.ui.window.Dialog
 import com.anse.easyQrPay.R
 import com.anse.easyQrPay.models.product.ProductCategoryValue
 import com.anse.easyQrPay.models.product.ProductValue
+import com.anse.easyQrPay.ui.item.CategoryItem
+import com.anse.easyQrPay.ui.item.ProductItem
 import com.anse.easyQrPay.ui.pages.qrPage.QRPage
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
@@ -332,106 +335,6 @@ fun ShopPage(
         }
     }
 }
-
-
-@Composable
-fun CategoryItem(
-    category: ProductCategoryValue?,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-) {
-    AnseButton(
-        onClick = { if (it) onClick() },
-        modifier = Modifier
-            .widthIn(min = 160.dp)
-            .heightIn(min = 40.dp),
-        buttonStyle = AnseButtonStyle.newStyle(
-            shape = CircleShape,
-            colors = AnseButtonColors(
-                contentColor = if (isSelected) Color.Black else Color.DarkGray,
-                containerColor = if (isSelected) Color(0xFFABDE82) else Color.White,
-            ),
-            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp),
-        )
-    ) {
-        Text(
-            text = stringResource(category?.nameRes ?: R.string.shop_page_category_all),
-            modifier = Modifier.align(Alignment.Center),
-            fontSize = 20.sp,
-            lineHeight = 24.sp,
-            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-            color = it,
-        )
-    }
-}
-
-@Composable
-fun ProductItem(
-    product: ProductValue,
-    onClick: () -> Unit,
-    cartItemCount: Int,
-) {
-    val enabled = rememberUpdatedState(newValue = (product.stock - cartItemCount) > 0)
-    Box {
-        AnseButton(
-            enabled = enabled.value,
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { if (it) onClick() },
-            buttonStyle = AnseButtonStyle.newStyle(
-                shape = RoundedCornerShape(20.dp),
-                colors = AnseButtonColors(
-                    contentColor = Color.Black,
-                    containerColor = Color.White,
-                ),
-                contentPadding = PaddingValues(12.dp),
-            )
-        ) {
-            Column(Modifier.fillMaxWidth()) {
-                Image(
-                    painter = BitmapPainter(image = StringToBitmap(product.image)!!),
-                    contentDescription = "product_image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.aspectRatio(1f, matchHeightConstraintsFirst = false),
-                    alpha = if (enabled.value) 1f else 0.2f
-                )
-                Spacer(Modifier.height(28.dp))
-                Text(
-                    text = product.name,
-                    fontSize = 20.sp,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight.Medium,
-                )
-                Spacer(Modifier.height(3.dp))
-                Text(
-                    text = product.price.toString(),
-                    fontSize = 18.sp,
-                    lineHeight = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(Modifier.height(5.dp))
-            }
-        }
-
-        if (!enabled.value) {
-            Surface(
-                color = Color.White,
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier.align(BiasAlignment(verticalBias = -0.4f, horizontalBias = 0f))
-            ) {
-                Text(
-                    text = "완판!!\n감사합니다:)",
-                    modifier = Modifier.padding(25.dp),
-                    fontSize = 20.sp,
-                    lineHeight = 20.sp,
-                    color = Color.Black,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-
-    }
-}
-
 
 @Composable
 fun ShoppingItem(

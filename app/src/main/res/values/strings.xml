@@ -5,7 +5,9 @@
     <string name="qr_page_price_message_suffix">원 입니다!</string>
     <string name="qr_page_toss_qr_title">토스 송금 QR</string>
     <string name="qr_page_bank_account_title">계좌 정보</string>
-    <string name="shop_page_category_all">전체</string>
+    <string name="category_all_button">전체</string>
+    <string name="category_add_button">+ 추가</string>
+
     <string name="shop_page_category_badge">캔뱃지</string>
     <string name="shop_page_category_photo_card">포토카드</string>
     <string name="shop_page_category_keyring">키링</string>
@@ -34,4 +36,8 @@
     <string name="shop_page_finish_selling_dialog_title">주문을 완료할까요?</string>
     <string name="shop_page_finish_selling_dialog_message">스텝 이외에 조작하지 말아주세요!!</string>
     <string name="shop_page_order_finish">주문 종료하기</string>
+
+    <string name="manage_page_title">관리</string>
+    <string name="manage_page_change_kiosk_button"><![CDATA[키오스크 시작 >]]></string>
+    <string name="manage_page_add_product_button">상품 추가하기</string>
 </resources>
