@@ -17,9 +17,9 @@ data class Product(
     @ColumnInfo(name = "image")
     val image: String,
     @ColumnInfo(name = "stock")
-    val stock: Int?,//null일 시 무제한
+    val stock: Int? = null,//null일 시 무제한
     @ColumnInfo(name = "category_code")
-    val categoryCode: String,
+    val categoryCode: String? = null,
     @ColumnInfo(name = "stopped")
     val stopped: Boolean = false,
 )

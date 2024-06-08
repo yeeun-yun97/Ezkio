@@ -1,0 +1,45 @@
+package com.anse.easyQrPay.ui.component.button
+
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.anse.easyQrPay.R
+import com.anse.easyQrPay.ui.theme.DarkGray
+import com.anse.easyQrPay.ui.theme.LightGray
+import com.anse.uikit.components.button.AnseButton
+import com.anse.uikit.components.button.AnseButtonColors
+import com.anse.uikit.components.button.AnseButtonStyle
+
+@Composable
+fun CircleCancelTextButton(
+    modifier: Modifier,
+    enabled: Boolean = true,
+    onClick: (Boolean) -> Unit,
+) {
+    AnseButton(
+        modifier = Modifier.then(modifier),
+        enabled = enabled,
+        onClick = onClick,
+        buttonStyle = AnseButtonStyle.newStyle(
+            shape = CircleShape,
+            colors = AnseButtonColors(
+                contentColor = DarkGray,
+                containerColor = LightGray,
+            ),
+            contentPadding = PaddingValues(horizontal = 40.dp, vertical = 12.dp)
+        )
+    ) {
+        Text(
+            stringResource(R.string.common_button_cancel),
+            fontSize = 16.sp,
+            color = it,
+            fontWeight = FontWeight.Normal
+        )
+    }
+}

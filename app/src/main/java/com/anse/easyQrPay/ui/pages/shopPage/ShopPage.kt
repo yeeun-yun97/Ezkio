@@ -36,6 +36,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,8 +81,8 @@ enum class ProductCategoryValueImpl(
     );
 
     companion object {
-        fun fromName(name: String): ProductCategoryValue {
-            return values().find { it.name == name } ?: throw IllegalArgumentException("No such category: $name")
+        fun fromName(name: String?): ProductCategoryValue? {
+            return values().find { it.name == name }
         }
     }
 }
@@ -208,12 +209,15 @@ fun ShopPage(
                         horizontalArrangement = Arrangement.spacedBy(20.dp),
                     ) {
                         itemsIndexed(selectedProductList.value) { index, item ->
-                            ProductItem(
-                                product = item,
+                            item.ProductItem(
+                                modifier = Modifier.fillMaxWidth(),
                                 onClick = {
-                                    shoppingList[item] = min((shoppingList[item] ?: 0) + 1, item.stock ?: Int.MAX_VALUE)
+                                    if (if (item.stopped) false
+                                        else if (item.stock == null) true
+                                        else (item.stock - (shoppingList[item] ?: 0)) > 0
+                                    )
+                                        shoppingList[item] = min((shoppingList[item] ?: 0) + 1, item.stock ?: Int.MAX_VALUE)
                                 },
-                                cartItemCount = shoppingList[item] ?: 0
                             )
                         }
                     }
@@ -258,7 +262,7 @@ fun ShopPage(
                                 count = item.second,
                                 setItemCount = {
                                     if (it <= 0) shoppingList.remove(item.first)
-                                    else shoppingList[item.first] = min(it, item.first.stock?: Int.MAX_VALUE)
+                                    else shoppingList[item.first] = min(it, item.first.stock ?: Int.MAX_VALUE)
                                 },
                                 editEnabled = !isCalculating.value
                             )

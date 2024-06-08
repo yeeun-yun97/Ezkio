@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 interface AnseButtonStyle {
@@ -81,6 +82,7 @@ fun AnseButton(
     enabled: Boolean = true,
     buttonStyle: AnseButtonStyle,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    shadowElevation: Dp = 0.dp,
     content: @Composable BoxScope.(Color) -> Unit,
 ) {
     val containerColor = buttonStyle.colors.containerColor(enabled = enabled)
@@ -95,7 +97,8 @@ fun AnseButton(
         shape = buttonStyle.shape,
         border = buttonStyle.border,
         color = containerColor.value,
-        interactionSource = interactionSource
+        interactionSource = interactionSource,
+        shadowElevation = shadowElevation
     ) {
         Box(
             modifier = Modifier

@@ -2,20 +2,28 @@ package com.anse.easyQrPay.ui.item
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
@@ -32,70 +40,108 @@ import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
 
 @Composable
-fun ProductItem(
-    product: Product,
+fun Product.ProductItem(
+    modifier: Modifier,
     onClick: () -> Unit,
-    cartItemCount: Int,
+    overlayView: @Composable BoxScope.() -> Unit = {},
 ) {
-    val enabled = rememberUpdatedState(newValue = if (product.stock == null) true else (product.stock - cartItemCount) > 0)
-    Box {
-        AnseButton(
-            enabled = enabled.value,
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { if (it) onClick() },
-            buttonStyle = AnseButtonStyle.newStyle(
-                shape = RoundedCornerShape(20.dp),
-                colors = AnseButtonColors(
-                    contentColor = Color.Black,
-                    containerColor = Color.White,
-                ),
-                contentPadding = PaddingValues(12.dp),
-            )
+    ProductItem(
+        modifier = modifier,
+        onClick = onClick,
+
+        stock = stock,
+        image = image,
+        name = name,
+        price = price,
+
+        overlayView = overlayView,
+    )
+}
+
+
+@Composable
+fun ProductItem(
+    modifier: Modifier,
+    onClick: () -> Unit,
+
+    image: String?,
+    stock: Int?,
+    price: Int,
+    name: String,
+
+    overlayView: @Composable BoxScope.() -> Unit = {},
+) {
+    AnseButton(
+        modifier = Modifier.then(modifier),
+        onClick = { if (it) onClick() },
+        buttonStyle = AnseButtonStyle.newStyle(
+            shape = RoundedCornerShape(7.dp),
+            colors = AnseButtonColors(
+                contentColor = Color.Black,
+                containerColor = Color.White,
+                disabledContainerColor = Color.White
+            ),
+            contentPadding = PaddingValues(),
+        ),
+        shadowElevation = 2.dp
+    ) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 17.dp, start = 16.dp, end = 16.dp, bottom = 20.dp)
         ) {
-            Column(Modifier.fillMaxWidth()) {
+            Box(Modifier.clip(RoundedCornerShape(5.dp))) {
                 Image(
-                    painter = StringToBitmap(product.image)?.let {
-                        BitmapPainter(image = it)
-                    } ?: painterResource(R.drawable.ic_launcher_background),
+                    painter = StringToBitmap(image)?.let { BitmapPainter(image = it) } ?: painterResource(R.drawable.ic_launcher_background),
                     contentDescription = "product_image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.aspectRatio(1f, matchHeightConstraintsFirst = false),
-                    alpha = if (enabled.value) 1f else 0.2f
                 )
-                Spacer(Modifier.height(28.dp))
-                Text(
-                    text = product.name,
-                    fontSize = 20.sp,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight.Medium,
-                )
-                Spacer(Modifier.height(3.dp))
-                Text(
-                    text = product.price.toString(),
-                    fontSize = 18.sp,
-                    lineHeight = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(Modifier.height(5.dp))
+                stock?.let { stock ->
+                    Surface(
+                        shape = CircleShape,
+                        color = Color.White,
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .align(Alignment.TopEnd)
+                    ) {
+                        Row(
+                            modifier = Modifier.heightIn(min = 30.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Spacer(Modifier.width(6.dp))
+                            Image(
+                                painterResource(id = R.drawable.manage_page_stock_icon),
+                                modifier = Modifier.size(24.dp),
+                                contentDescription = "stock_icon",
+                            )
+                            Spacer(Modifier.width(3.dp))
+                            Text(
+                                stock.toString(),
+                                color = it,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.ExtraLight
+                            )
+                            Spacer(Modifier.width(12.dp))
+                        }
+                    }
+                }
             }
+            Spacer(Modifier.height(20.dp))
+            Text(
+                text = name,
+                color = it,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Light,
+            )
+            Spacer(Modifier.height(5.dp))
+            Text(
+                text = price.toString(),
+                fontSize = 18.sp,
+                color = it,
+                fontWeight = FontWeight.Bold,
+            )
         }
-
-        if (!enabled.value) {
-            Surface(
-                color = Color.White,
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier.align(BiasAlignment(verticalBias = -0.4f, horizontalBias = 0f))
-            ) {
-                Text(
-                    text = "완판!!\n감사합니다:)",
-                    modifier = Modifier.padding(25.dp),
-                    fontSize = 20.sp,
-                    lineHeight = 20.sp,
-                    color = Color.Black,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-
+        overlayView()
     }
 }

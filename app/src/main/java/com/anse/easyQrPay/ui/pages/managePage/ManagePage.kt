@@ -1,13 +1,13 @@
 package com.anse.easyQrPay.ui.pages.managePage
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,23 +25,33 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.anse.easyQrPay.MainActivityViewModel
 import com.anse.easyQrPay.R
-import com.anse.easyQrPay.models.product.ProductCategoryValue
 import com.anse.easyQrPay.models.product.Product
+import com.anse.easyQrPay.models.product.ProductCategoryValue
+import com.anse.easyQrPay.ui.component.state.rememberUiVisibility
+import com.anse.easyQrPay.ui.component.state.rememberUiVisibilityByNull
 import com.anse.easyQrPay.ui.item.CategoryItem
 import com.anse.easyQrPay.ui.item.ProductItem
+import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductEditDialog
+import com.anse.easyQrPay.ui.pages.managePage.menu.EProductMenu
+import com.anse.easyQrPay.ui.pages.managePage.menu.ProductMenu
 import com.anse.easyQrPay.ui.pages.shopPage.ProductCategoryValueImpl
 import com.anse.easyQrPay.ui.theme.DarkGray
 import com.anse.easyQrPay.ui.theme.EasyQrPayTheme
@@ -52,44 +62,112 @@ import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonNoStyle
 import com.anse.uikit.components.button.AnseButtonStyle
 
+val productExample = Product(
+    productCode = "1",
+    price = 1000,
+    name = "product1",
+    image = "",
+    stock = 10,
+    categoryCode = "category1"
+)
+
 @Preview
 @Composable
 fun ManagePagePreview() {
     EasyQrPayTheme {
         ManagePage(
             productList =
-                    listOf(
-                        Product(
-                            productCode = "1",
-                            price = 1000,
-                            name = "product1",
-                            image = "",
-                            stock = 10,
-                            categoryCode = "category1"
-                        )
-                    )
-
-            ,
+            listOf(
+                productExample,
+                productExample.copy(stock = null),
+                productExample.copy(stock = 0),
+                productExample.copy(stopped = true)
+            ),
+            selectImage = {},
             navigateToSetting = {},
             navigateToStatics = {},
             navigateToKiosk = {},
-            addCategory = {},
-            addProduct = {}
+            selectedImage = rememberUpdatedState(newValue = null),
+            clearSelectedImage = {}
         )
     }
 }
 
 @Composable
 fun ManagePage(
+    viewModel: ManagePageViewModel = viewModel(),
     categoryList: List<ProductCategoryValue> = ProductCategoryValueImpl.entries,
     productList: List<Product>,
-    addCategory: () -> Unit,
-    addProduct: () -> Unit,
+    selectImage: () -> Unit,
     navigateToSetting: () -> Unit,
     navigateToStatics: () -> Unit,
     navigateToKiosk: () -> Unit,
+    selectedImage: State<String?>,
+    clearSelectedImage: () -> Unit,
 ) {
     val selectedCategory = rememberSaveable { mutableStateOf<ProductCategoryValue?>(null) }
+    val selectedProduct = rememberSaveable { mutableStateOf<Product?>(null) }
+    val onClickProductMenu = { menu: EProductMenu ->
+        when (menu) {
+            EProductMenu.EDIT_INFO -> {
+                selectedProduct.value = null
+            }
+
+            EProductMenu.MANAGE_STOCK -> {
+                selectedProduct.value = null
+            }
+
+            EProductMenu.DELETE -> {
+                selectedProduct.value = null
+            }
+        }
+    }
+
+
+    val (addNewProductDialogVisibility, showAddNewProductDialog) = rememberUiVisibility(
+        onHide = {
+            clearSelectedImage()
+            true
+        }
+    )
+    val (editProductDialogVisibility, showEditProductDialog) = rememberUiVisibilityByNull<Product>(
+        onHide = {
+            clearSelectedImage()
+            true
+        }
+    )
+
+    val context = LocalContext.current
+
+    if (addNewProductDialogVisibility.value) {
+        ProductEditDialog(
+            onDismissRequest = { showAddNewProductDialog(false) },
+            product = null,
+            saveData = {
+                viewModel.upsertProduct(it, context.applicationContext)
+            },
+            selectImage = selectImage,
+            selectedImage = selectedImage
+        )
+    }
+
+    editProductDialogVisibility.value?.let {
+        ProductEditDialog(
+            onDismissRequest = { showEditProductDialog(null) },
+            product = it,
+            saveData = {
+                viewModel.upsertProduct(it, context.applicationContext)
+            },
+            selectImage = selectImage,
+            selectedImage = selectedImage
+        )
+    }
+
+
+
+
+
+
     Column(Modifier.fillMaxSize()) {
         Surface(color = Color.White) {
             Column {
@@ -190,7 +268,7 @@ fun ManagePage(
                     }
                     item {
                         AnseButton(
-                            onClick = { if (it) addCategory() },
+                            onClick = { if (it) viewModel.addCategory() },
                             modifier = Modifier
                                 .heightIn(min = 40.dp),
                             buttonStyle = AnseButtonStyle.newStyle(
@@ -214,60 +292,86 @@ fun ManagePage(
                 }
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(6),
-                    contentPadding = PaddingValues(horizontal = 15.dp, vertical = 5.dp),
+                    contentPadding = PaddingValues(horizontal = 40.dp, vertical = 5.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     item {
-                        AnseButtonNoStyle(
+                        AnseButton(
                             onClick = {
-                                if (it) addProduct()
-                            }
-                        ) {
-                            Surface(
-                                modifier = Modifier.fillMaxWidth(),
-                                color = Gray,
-                                shape = RoundedCornerShape(7.dp)
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .fillMaxHeight(),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Spacer(Modifier.height(60.dp))
-                                    Spacer(Modifier.weight(1f))
-                                    Image(
-                                        painterResource(id = R.drawable.manage_page_add_icon),
-                                        modifier = Modifier.size(40.dp),
-                                        contentDescription = "addProductIcon",
-                                        colorFilter = ColorFilter.tint(DarkGray)
-                                    )
-                                    Spacer(Modifier.height(20.dp))
-                                    Text(
-                                        stringResource(id = R.string.manage_page_add_product_button),
-                                        color = DarkGray,
-                                        fontSize = 20.sp
-                                    )
-                                    Spacer(Modifier.height(60.dp))
-                                    Spacer(Modifier.weight(1f))
+                                if (it) {
+                                    showAddNewProductDialog(true)
+                                    selectedProduct.value = null
                                 }
+                            },
+                            buttonStyle = AnseButtonStyle.newStyle(
+                                shape = RoundedCornerShape(7.dp),
+                                colors = AnseButtonColors(
+                                    containerColor = Gray,
+                                    contentColor = DarkGray,
+                                ),
+                                contentPadding = PaddingValues(10.dp)
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Spacer(Modifier.height(60.dp))
+                                Spacer(Modifier.weight(1f))
+                                Image(
+                                    painterResource(id = R.drawable.manage_page_add_icon),
+                                    modifier = Modifier.size(40.dp),
+                                    contentDescription = "addProductIcon",
+                                    colorFilter = ColorFilter.tint(it)
+                                )
+                                Spacer(Modifier.height(20.dp))
+                                Text(
+                                    stringResource(id = R.string.manage_page_add_product_button),
+                                    color = it,
+                                    fontSize = 20.sp
+                                )
+                                Spacer(Modifier.height(60.dp))
+                                Spacer(Modifier.weight(1f))
                             }
                         }
 
                     }
 
                     itemsIndexed(productList) { index, item ->
-                        ProductItem(
-                            product = item,
+                        item.ProductItem(
+                            modifier = Modifier.fillMaxWidth(),
                             onClick = {
-                                //TODO
+                                selectedProduct.value = item
                             },
-                            cartItemCount = 0
-                        )
+                        ) {
+                            if (selectedProduct.value == item) {
+                                Box(
+                                    Modifier
+                                        .matchParentSize()
+                                        .background(DarkGray.copy(alpha = 0.7f))
+                                ) {
+                                    ProductMenu(
+                                        Modifier.align(Alignment.Center),
+                                        onClickProductMenu
+                                    )
+                                }
+                            } else if (item.stopped || item.stock ?: Int.MAX_VALUE <= 0) {
+                                Surface(
+                                    color = Color.White.copy(alpha = 0.7f),
+                                    modifier = Modifier.matchParentSize()
+                                ) {
+
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
+
+
+
