@@ -2,14 +2,16 @@ package com.anse.easyQrPay.activity
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kr.yeeun0411.data.ProductRepository
-import kr.yeeun0411.data.model.CategoryModel
-import kr.yeeun0411.data.model.ProductModel
+import kr.yeeun0411.database.model.model.CategoryModel
+import kr.yeeun0411.database.model.model.ProductModel
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,8 +20,10 @@ class MainActivityViewModel @Inject constructor(
 ) : ViewModel() {
     private val _selectedImage = mutableStateOf<String?>(null)
     val selectedImage: State<String?> = _selectedImage
-    val productList: List<ProductModel> = listOf()
     val categoryList: List<CategoryModel> = listOf()
+
+    val productList: Flow<List<ProductModel>> get() = repository.getProducts()
+
     fun clearSelectedImage() {
 
     }

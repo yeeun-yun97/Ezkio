@@ -15,6 +15,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.collectAsState
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,11 +24,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.anse.easyQrPay.R
 import com.anse.easyQrPay.ui.pages.managePage.ManagePage
-import com.anse.easyQrPay.ui.pages.managePage.ManagePageViewModel
 import com.anse.easyQrPay.ui.pages.shopPage.ShopPage
 import com.anse.easyQrPay.ui.theme.EasyQrPayTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kr.yeeun0411.data.model.ProductModel
+import kr.yeeun0411.database.model.model.ProductModel
 import java.io.ByteArrayOutputStream
 
 @AndroidEntryPoint
@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val viewModel: MainActivityViewModel = viewModel()
-            val managePageViewModel: ManagePageViewModel = viewModel()
 
             val finishOrder: (Map<ProductModel, Int>, () -> Unit) -> Unit = { orderMap, onFinished ->
                 viewModel.finishOrder(orderMap, onFinished)
@@ -86,7 +85,7 @@ class MainActivity : ComponentActivity() {
                 NavHost(startDestination = "manage", navController = navController) {
                     composable("shop") {
                         ShopPage(
-                            productList = viewModel.productList,
+                            productList = viewModel.productList.collectAsState(initial = listOf()),
                             finishOrder = finishOrder,
                             categoryList = viewModel.categoryList,
                         )
@@ -94,9 +93,7 @@ class MainActivity : ComponentActivity() {
 
                     composable("manage") {
                         ManagePage(
-                            viewModel = managePageViewModel,
-                            categoryList = listOf(),
-                            productList = listOf(),
+                            viewModel = viewModel,
                             selectImage = openImage,
                             selectedImage = viewModel.selectedImage,
                             clearSelectedImage = { viewModel.clearSelectedImage() },
@@ -150,14 +147,41 @@ private fun getBase64FromDrawableRes(resources: Resources, drawableRes: Int): St
 
 private fun Uri.getImageBase64OrNull(context: Context): String? {
     return try {
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+        }
+
+        context.contentResolver.openInputStream(this)?.use { inputStream ->
+            BitmapFactory.decodeStream(inputStream, null, options)
+        }
+
+        options.inSampleSize = calculateInSampleSize(options, 300, 300)
+        options.inJustDecodeBounds = false
+
         val inputStream = context.contentResolver.openInputStream(this)
-        val bitmap = BitmapFactory.decodeStream(inputStream)
+        val bitmap = BitmapFactory.decodeStream(inputStream, null, options)
         val byteStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteStream)
+        bitmap!!.compress(Bitmap.CompressFormat.PNG, 100, byteStream)
         val byteArray = byteStream.toByteArray()
         return Base64.encodeToString(byteArray, Base64.DEFAULT)
     } catch (exception: Exception) {
         Toast.makeText(context, R.string.manage_page_fail_image_import_error_message, Toast.LENGTH_SHORT).show()
         null
     }
+}
+
+private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    val (height: Int, width: Int) = options.run { outHeight to outWidth }
+    var inSampleSize = 1
+
+    if (height > reqHeight || width > reqWidth) {
+        val halfHeight: Int = height / 2
+        val halfWidth: Int = width / 2
+
+        while (halfHeight / inSampleSize >= reqHeight || halfWidth / inSampleSize >= reqWidth) {
+            inSampleSize *= 2
+        }
+    }
+
+    return inSampleSize
 }

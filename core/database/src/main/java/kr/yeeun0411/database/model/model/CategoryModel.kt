@@ -1,4 +1,4 @@
-package kr.yeeun0411.data.model
+package kr.yeeun0411.database.model.model
 
 import java.util.UUID
 

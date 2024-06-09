@@ -1,15 +1,24 @@
 package kr.yeeun0411.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kr.yeeun0411.data.converters.convertToEntity
+import kr.yeeun0411.data.converters.convertToModel
 import kr.yeeun0411.database.dao.ProductDao
-import kr.yeeun0411.data.model.ProductModel
+import kr.yeeun0411.database.model.model.ProductModel
 import javax.inject.Inject
 
 class ProductRepository @Inject constructor(
     private val productDao: ProductDao,
 ) {
-    fun getProducts(): List<ProductModel> {
-        return listOf()
+    fun getProducts(): Flow<List<ProductModel>> {
+        return productDao.getAllProducts().map {
+            it.map {
+                it.convertToModel()
+            }
+        }
     }
 
     fun upsertProduct(

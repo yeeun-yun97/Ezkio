@@ -26,6 +26,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.anse.easyQrPay.R
+import com.anse.easyQrPay.activity.MainActivityViewModel
 import com.anse.easyQrPay.ui.component.state.rememberUiVisibility
 import com.anse.easyQrPay.ui.component.state.rememberUiVisibilityByNull
 import com.anse.easyQrPay.ui.item.CategoryItem
@@ -56,8 +58,8 @@ import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonNoStyle
 import com.anse.uikit.components.button.AnseButtonStyle
-import kr.yeeun0411.data.model.CategoryModel
-import kr.yeeun0411.data.model.ProductModel
+import kr.yeeun0411.database.model.model.CategoryModel
+import kr.yeeun0411.database.model.model.ProductModel
 
 val productExample = ProductModel(
     productCode = "1",
@@ -73,17 +75,6 @@ val productExample = ProductModel(
 fun ManagePagePreview() {
     EasyQrPayTheme {
         ManagePage(
-            productList =
-            listOf(
-                productExample,
-                productExample.copy(stock = null),
-                productExample.copy(stock = 0),
-                productExample.copy(stopped = true)
-            ),
-            categoryList = listOf(
-                CategoryModel(name = "식사"),
-                CategoryModel(name = "음료"),
-            ),
             selectImage = {},
             navigateToSetting = {},
             navigateToStatics = {},
@@ -97,9 +88,7 @@ fun ManagePagePreview() {
 
 @Composable
 fun ManagePage(
-    viewModel: ManagePageViewModel,
-    categoryList: List<CategoryModel>,
-    productList: List<ProductModel>,
+    viewModel: MainActivityViewModel,
     selectImage: () -> Unit,
     navigateToSetting: () -> Unit,
     navigateToStatics: () -> Unit,
@@ -107,6 +96,7 @@ fun ManagePage(
     selectedImage: State<String?>,
     clearSelectedImage: () -> Unit,
 ) {
+    val productList = viewModel.productList.collectAsState(listOf())
     val selectedCategory = rememberSaveable { mutableStateOf<CategoryModel?>(null) }
     val selectedProduct = rememberSaveable { mutableStateOf<ProductModel?>(null) }
     val onClickProductMenu = { menu: EProductMenu ->
@@ -145,6 +135,7 @@ fun ManagePage(
             product = null,
             saveData = {
                 viewModel.upsertProduct(it)
+                showAddNewProductDialog(false)
             },
             selectImage = selectImage,
             selectedImage = selectedImage
@@ -157,6 +148,7 @@ fun ManagePage(
             product = it,
             saveData = {
                 viewModel.upsertProduct(it)
+                showEditProductDialog(null)
             },
             selectImage = selectImage,
             selectedImage = selectedImage
@@ -259,7 +251,7 @@ fun ManagePage(
                             onClick = { selectedCategory.value = null },
                         )
                     }
-                    itemsIndexed(categoryList) { index, item ->
+                    itemsIndexed(viewModel.categoryList) { index, item ->
                         CategoryItem(
                             category = item,
                             isSelected = selectedCategory.value == item,
@@ -339,7 +331,7 @@ fun ManagePage(
 
                     }
 
-                    itemsIndexed(productList) { index, item ->
+                    itemsIndexed(productList.value) { index, item ->
                         item.ProductItem(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
@@ -367,6 +359,7 @@ fun ManagePage(
                             }
                         }
                     }
+
                 }
             }
         }

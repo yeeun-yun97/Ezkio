@@ -75,25 +75,28 @@ data class AnseButtonColors(
     }
 }
 
+/**
+ * @param enabled null if no click action, true if enabled, false if disabled
+ */
 @Composable
 fun AnseButton(
     onClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
+    enabled: Boolean? = true,
     buttonStyle: AnseButtonStyle,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shadowElevation: Dp = 0.dp,
     content: @Composable BoxScope.(Color) -> Unit,
 ) {
-    val containerColor = buttonStyle.colors.containerColor(enabled = enabled)
-    val contentColor = buttonStyle.colors.contentColor(enabled = enabled)
+    val containerColor = buttonStyle.colors.containerColor(enabled = enabled == true)
+    val contentColor = buttonStyle.colors.contentColor(enabled = enabled == true)
 
     Surface(
-        onClick = { onClick(enabled) },
+        onClick = { onClick(enabled == true) },
         modifier = Modifier
             .then(modifier)
             .semantics { role = Role.Button },
-        enabled = enabled,
+        enabled = enabled != null,
         shape = buttonStyle.shape,
         border = buttonStyle.border,
         color = containerColor.value,

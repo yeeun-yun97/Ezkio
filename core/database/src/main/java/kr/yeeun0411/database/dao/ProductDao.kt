@@ -1,5 +1,6 @@
 package kr.yeeun0411.database.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
@@ -10,7 +11,7 @@ import kr.yeeun0411.database.model.ProductEntity
 interface ProductDao {
 
     @Query("SELECT * FROM Products")
-    fun getAllFlow(): Flow<List<ProductEntity>>
+    fun getAllProducts(): Flow<List<ProductEntity>>
 
     @Upsert
     fun upsertProduct(productValue: ProductEntity)

@@ -52,9 +52,11 @@ android {
 dependencies {
     implementation(project(":uiKit"))
     implementation(project(":core:data"))
+    implementation(project(":core:database"))
 
     // HILT
     implementation("com.google.dagger:hilt-android:2.51.1")
+    implementation(project(":core:database"))
     kapt("com.google.dagger:hilt-compiler:2.51.1")
 
     // For instrumentation tests

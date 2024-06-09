@@ -30,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.LiveData
 import com.anse.easyQrPay.R
 import com.anse.easyQrPay.ui.item.CategoryItem
 import com.anse.easyQrPay.ui.item.ProductItem
@@ -56,15 +58,15 @@ import com.anse.easyQrPay.ui.pages.qrPage.QRPage
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
-import kr.yeeun0411.data.model.CategoryModel
-import kr.yeeun0411.data.model.ProductModel
+import kr.yeeun0411.database.model.model.CategoryModel
+import kr.yeeun0411.database.model.model.ProductModel
 import kotlin.math.min
 
 
 @Composable
 fun ShopPage(
     categoryList: List<CategoryModel>,
-    productList: List<ProductModel>,
+    productList: State<List<ProductModel>>,
     finishOrder: (Map<ProductModel, Int>, () -> Unit) -> Unit,
 //    navigateToQRPage: () -> Unit,
 ) {
@@ -73,15 +75,6 @@ fun ShopPage(
     val shoppingPrice = remember {
         derivedStateOf {
             shoppingList.entries.map { (product, amount) -> product.price * amount }.sum()
-        }
-    }
-
-    val selectedProductList = remember(key1 = selectedCategory.value) {
-        derivedStateOf {
-            selectedCategory.value.let { selectedCategory ->
-                if (selectedCategory == null) productList
-                else productList.filter { it.categoryCode == selectedCategory.categoryCode }
-            }
         }
     }
 
@@ -181,19 +174,21 @@ fun ShopPage(
                         verticalArrangement = Arrangement.spacedBy(20.dp),
                         horizontalArrangement = Arrangement.spacedBy(20.dp),
                     ) {
-                        itemsIndexed(selectedProductList.value) { index, item ->
-                            item.ProductItem(
-                                modifier = Modifier.fillMaxWidth(),
-                                onClick = {
-                                    if (if (item.stopped) false
-                                        else item.stock.let {
-                                            if (it == null) true
-                                            else (it - (shoppingList[item] ?: 0)) > 0
-                                        }
-                                    )
-                                        shoppingList[item] = min((shoppingList[item] ?: 0) + 1, item.stock ?: Int.MAX_VALUE)
-                                },
-                            )
+                        productList.value?.let {
+                            itemsIndexed(it) { index, item ->
+                                item.ProductItem(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    onClick = {
+                                        if (if (item.stopped) false
+                                            else item.stock.let {
+                                                if (it == null) true
+                                                else (it - (shoppingList[item] ?: 0)) > 0
+                                            }
+                                        )
+                                            shoppingList[item] = min((shoppingList[item] ?: 0) + 1, item.stock ?: Int.MAX_VALUE)
+                                    },
+                                )
+                            }
                         }
                     }
                 } else {

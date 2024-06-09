@@ -19,7 +19,7 @@ import com.anse.easyQrPay.ui.theme.Primary
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
-import kr.yeeun0411.data.model.CategoryModel
+import kr.yeeun0411.database.model.model.CategoryModel
 
 @Composable
 fun CategoryItem(

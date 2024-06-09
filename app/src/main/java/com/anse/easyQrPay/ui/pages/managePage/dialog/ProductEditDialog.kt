@@ -1,5 +1,6 @@
 package com.anse.easyQrPay.ui.pages.managePage.dialog
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,7 +48,7 @@ import com.anse.easyQrPay.ui.theme.LightGray
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
-import kr.yeeun0411.data.model.ProductModel
+import kr.yeeun0411.database.model.model.ProductModel
 
 @Preview
 @Composable
@@ -70,6 +72,7 @@ fun ProductEditDialog(
     selectedImage: State<String?>,
     selectImage: () -> Unit,
 ) {
+    val context = LocalContext.current
     val name = rememberSaveable { mutableStateOf(product?.name ?: "") }
     val price = rememberSaveable { mutableStateOf(product?.price) }
     val image = remember {
@@ -237,7 +240,11 @@ fun ProductEditDialog(
                                     price = price.value ?: 0,
                                     image = image.value!!,
                                 )
-                            )
+                            ) else if (name.value.isBlank()) {
+                                Toast.makeText(context, R.string.manage_page_product_edit_dialog_product_name_empty_toast, Toast.LENGTH_SHORT).show()
+                            } else if (image.value == null) {
+                                Toast.makeText(context, R.string.manage_page_product_edit_dialog_product_image_empty_toast, Toast.LENGTH_SHORT).show()
+                            }
                         }
                     )
                 }

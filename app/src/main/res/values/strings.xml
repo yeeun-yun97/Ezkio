@@ -53,4 +53,6 @@
     <string name="manage_page_product_edit_dialog_product_image_hint">눌러서 사진 선택하기 (정방형 권장)</string>
     <string name="manage_page_fail_image_import_error_message">이미지를 불러오지 못했습니다.</string>
     <string name="manage_page_no_permission_error_message">권한이 없습니다.</string>
+    <string name="manage_page_product_edit_dialog_product_name_empty_toast">상품 이름을 설정해주세요.</string>
+    <string name="manage_page_product_edit_dialog_product_image_empty_toast">상품 이미지를 설정해주세요.</string>
 </resources>
