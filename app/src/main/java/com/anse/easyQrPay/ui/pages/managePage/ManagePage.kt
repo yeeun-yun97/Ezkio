@@ -49,6 +49,7 @@ import com.anse.easyQrPay.ui.item.CategoryItem
 import com.anse.easyQrPay.ui.item.ProductItem
 import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductDeleteConfirmDialog
 import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductEditDialog
+import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductManageStatusDialog
 import com.anse.easyQrPay.ui.pages.managePage.menu.EProductMenu
 import com.anse.easyQrPay.ui.pages.managePage.menu.ProductMenu
 import com.anse.easyQrPay.ui.theme.DarkGray
@@ -116,6 +117,8 @@ fun ManagePage(
 
     val (deleteProductDialogVisibility, showDeleteProductDialog) = rememberUiVisibilityByNull<String>()
 
+    val (manageProductStockDialogVisibility, showManageProductStockDialog) = rememberUiVisibilityByNull<ProductModel>()
+
     val onClickProductMenu = { menu: EProductMenu, productModel: ProductModel ->
         when (menu) {
             EProductMenu.EDIT_INFO -> {
@@ -125,6 +128,7 @@ fun ManagePage(
 
             EProductMenu.MANAGE_STOCK -> {
                 selectedProduct.value = null
+                showManageProductStockDialog(productModel)
             }
 
             EProductMenu.DELETE -> {
@@ -141,6 +145,17 @@ fun ManagePage(
             onDelete = {
                 showDeleteProductDialog(null)
                 viewModel.deleteProduct(it)
+            }
+        )
+    }
+
+    manageProductStockDialogVisibility.value?.let {
+        ProductManageStatusDialog(
+            onDismissRequest = { showManageProductStockDialog(null) },
+            product = it,
+            saveData = {
+                viewModel.upsertProduct(it)
+                showManageProductStockDialog(null)
             }
         )
     }

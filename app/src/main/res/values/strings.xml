@@ -48,7 +48,6 @@
     <string name="manage_page_product_menu_manage_stock">판매 관리</string>
     <string name="manage_page_product_menu_delete">삭제</string>
 
-
     <!--상품 수정하기 다이얼로그-->
     <string name="manage_page_product_edit_dialog_title">상품 수정하기</string>
     <string name="manage_page_product_edit_dialog_create_title">상품 만들기</string>
@@ -64,6 +63,16 @@
     <!--상품 삭제하기 다이얼로그-->
     <string name="manage_page_product_delete_confirm_dialog_title">상품을 삭제하시겠습니까?</string>
     <string name="manage_page_product_delete_confirm_dialog_message">이 작업은 되돌릴 수 없습니다.\n삭제된 상품의 판매 데이터는 N/A항목에 합쳐집니다.</string>
+
+    <!--상품 재고 관리하기 다이얼로그-->
+    <string name="manage_page_product_manage_status_dialog_title">판매 관리하기</string>
+    <string name="manage_page_product_manage_status_dialog_stop_selling">판매 상태</string>
+    <string name="manage_page_product_manage_status_dialog_stop_selling_switch_on">판매중</string>
+    <string name="manage_page_product_manage_status_dialog_stop_selling_switch_off">판매중지</string>
+    <string name="manage_page_product_manage_status_dialog_infinite_stock">재고 관리</string>
+    <string name="manage_page_product_manage_status_dialog_infinite_stock_switch_on">관리하기</string>
+    <string name="manage_page_product_manage_status_dialog_infinite_stock_switch_off">관리 안 함 (무제한 재고)</string>
+    <string name="manage_page_product_manage_status_dialog_stock_count">재고 개수</string>
 
 
 </resources>
