@@ -165,7 +165,7 @@ private fun Uri.getImageBase64OrNull(context: Context): String? {
         val byteArray = byteStream.toByteArray()
         return Base64.encodeToString(byteArray, Base64.DEFAULT)
     } catch (exception: Exception) {
-        Toast.makeText(context, R.string.manage_page_fail_image_import_error_message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, R.string.manage_page_product_edit_dialog_fail_image_import_toast, Toast.LENGTH_SHORT).show()
         null
     }
 }

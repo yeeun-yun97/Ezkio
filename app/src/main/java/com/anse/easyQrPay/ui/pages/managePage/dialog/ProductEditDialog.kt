@@ -98,7 +98,7 @@ fun ProductEditDialog(
             ) {
                 Text(
                     stringResource(
-                        if (product == null) R.string.manage_page_new_product_dialog_title
+                        if (product == null) R.string.manage_page_product_edit_dialog_create_title
                         else R.string.manage_page_product_edit_dialog_title
                     ),
                     fontSize = 28.sp,
