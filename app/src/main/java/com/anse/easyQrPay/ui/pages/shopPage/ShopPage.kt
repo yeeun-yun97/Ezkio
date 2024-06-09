@@ -3,7 +3,6 @@ package com.anse.easyQrPay.ui.pages.shopPage
 import androidx.activity.compose.BackHandler
 import android.graphics.BitmapFactory
 import android.util.Base64
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,12 +30,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,50 +50,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.anse.easyQrPay.R
-import com.anse.easyQrPay.models.product.ProductCategoryValue
-import com.anse.easyQrPay.models.product.Product
 import com.anse.easyQrPay.ui.item.CategoryItem
 import com.anse.easyQrPay.ui.item.ProductItem
 import com.anse.easyQrPay.ui.pages.qrPage.QRPage
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
+import kr.yeeun0411.data.model.CategoryModel
+import kr.yeeun0411.data.model.ProductModel
 import kotlin.math.min
-
-
-enum class ProductCategoryValueImpl(
-    @StringRes override val nameRes: Int,
-) : ProductCategoryValue {
-    Badge(
-        nameRes = R.string.shop_page_category_badge
-    ),
-    PhotoCard(
-        nameRes = R.string.shop_page_category_photo_card
-    ),
-    POSTCARD(
-        nameRes = R.string.shop_page_category_post_card
-    ),
-    SCROLL(
-        nameRes = R.string.shop_page_category_scroll
-    );
-
-    companion object {
-        fun fromName(name: String?): ProductCategoryValue? {
-            return values().find { it.name == name }
-        }
-    }
-}
 
 
 @Composable
 fun ShopPage(
-    categoryList: List<ProductCategoryValue> = ProductCategoryValueImpl.entries,
-    productList: State<List<Product>>,
-    finishOrder: (Map<Product, Int>, () -> Unit) -> Unit,
+    categoryList: List<CategoryModel>,
+    productList: List<ProductModel>,
+    finishOrder: (Map<ProductModel, Int>, () -> Unit) -> Unit,
 //    navigateToQRPage: () -> Unit,
 ) {
-    val selectedCategory = rememberSaveable { mutableStateOf<ProductCategoryValue?>(null) }
-    val shoppingList = remember { mutableStateMapOf<Product, Int>() }
+    val selectedCategory = rememberSaveable { mutableStateOf<CategoryModel?>(null) }
+    val shoppingList = remember { mutableStateMapOf<ProductModel, Int>() }
     val shoppingPrice = remember {
         derivedStateOf {
             shoppingList.entries.map { (product, amount) -> product.price * amount }.sum()
@@ -106,8 +79,8 @@ fun ShopPage(
     val selectedProductList = remember(key1 = selectedCategory.value) {
         derivedStateOf {
             selectedCategory.value.let { selectedCategory ->
-                if (selectedCategory == null) productList.value
-                else productList.value.filter { ProductCategoryValueImpl.fromName(it.categoryCode) == selectedCategory }
+                if (selectedCategory == null) productList
+                else productList.filter { it.categoryCode == selectedCategory.categoryCode }
             }
         }
     }
@@ -213,8 +186,10 @@ fun ShopPage(
                                 modifier = Modifier.fillMaxWidth(),
                                 onClick = {
                                     if (if (item.stopped) false
-                                        else if (item.stock == null) true
-                                        else (item.stock - (shoppingList[item] ?: 0)) > 0
+                                        else item.stock.let {
+                                            if (it == null) true
+                                            else (it - (shoppingList[item] ?: 0)) > 0
+                                        }
                                     )
                                         shoppingList[item] = min((shoppingList[item] ?: 0) + 1, item.stock ?: Int.MAX_VALUE)
                                 },
@@ -335,7 +310,7 @@ fun ShopPage(
 
 @Composable
 fun ShoppingItem(
-    product: Product,
+    product: ProductModel,
     count: Int,
     setItemCount: (Int) -> Unit,
     editEnabled: Boolean,

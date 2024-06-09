@@ -33,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,10 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.anse.easyQrPay.MainActivityViewModel
 import com.anse.easyQrPay.R
-import com.anse.easyQrPay.models.product.Product
-import com.anse.easyQrPay.models.product.ProductCategoryValue
 import com.anse.easyQrPay.ui.component.state.rememberUiVisibility
 import com.anse.easyQrPay.ui.component.state.rememberUiVisibilityByNull
 import com.anse.easyQrPay.ui.item.CategoryItem
@@ -52,7 +48,6 @@ import com.anse.easyQrPay.ui.item.ProductItem
 import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductEditDialog
 import com.anse.easyQrPay.ui.pages.managePage.menu.EProductMenu
 import com.anse.easyQrPay.ui.pages.managePage.menu.ProductMenu
-import com.anse.easyQrPay.ui.pages.shopPage.ProductCategoryValueImpl
 import com.anse.easyQrPay.ui.theme.DarkGray
 import com.anse.easyQrPay.ui.theme.EasyQrPayTheme
 import com.anse.easyQrPay.ui.theme.Gray
@@ -61,8 +56,10 @@ import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonNoStyle
 import com.anse.uikit.components.button.AnseButtonStyle
+import kr.yeeun0411.data.model.CategoryModel
+import kr.yeeun0411.data.model.ProductModel
 
-val productExample = Product(
+val productExample = ProductModel(
     productCode = "1",
     price = 1000,
     name = "product1",
@@ -83,21 +80,26 @@ fun ManagePagePreview() {
                 productExample.copy(stock = 0),
                 productExample.copy(stopped = true)
             ),
+            categoryList = listOf(
+                CategoryModel(name = "식사"),
+                CategoryModel(name = "음료"),
+            ),
             selectImage = {},
             navigateToSetting = {},
             navigateToStatics = {},
             navigateToKiosk = {},
             selectedImage = rememberUpdatedState(newValue = null),
-            clearSelectedImage = {}
+            clearSelectedImage = {},
+            viewModel = viewModel()
         )
     }
 }
 
 @Composable
 fun ManagePage(
-    viewModel: ManagePageViewModel = viewModel(),
-    categoryList: List<ProductCategoryValue> = ProductCategoryValueImpl.entries,
-    productList: List<Product>,
+    viewModel: ManagePageViewModel,
+    categoryList: List<CategoryModel>,
+    productList: List<ProductModel>,
     selectImage: () -> Unit,
     navigateToSetting: () -> Unit,
     navigateToStatics: () -> Unit,
@@ -105,8 +107,8 @@ fun ManagePage(
     selectedImage: State<String?>,
     clearSelectedImage: () -> Unit,
 ) {
-    val selectedCategory = rememberSaveable { mutableStateOf<ProductCategoryValue?>(null) }
-    val selectedProduct = rememberSaveable { mutableStateOf<Product?>(null) }
+    val selectedCategory = rememberSaveable { mutableStateOf<CategoryModel?>(null) }
+    val selectedProduct = rememberSaveable { mutableStateOf<ProductModel?>(null) }
     val onClickProductMenu = { menu: EProductMenu ->
         when (menu) {
             EProductMenu.EDIT_INFO -> {
@@ -130,21 +132,19 @@ fun ManagePage(
             true
         }
     )
-    val (editProductDialogVisibility, showEditProductDialog) = rememberUiVisibilityByNull<Product>(
+    val (editProductDialogVisibility, showEditProductDialog) = rememberUiVisibilityByNull<ProductModel>(
         onHide = {
             clearSelectedImage()
             true
         }
     )
 
-    val context = LocalContext.current
-
     if (addNewProductDialogVisibility.value) {
         ProductEditDialog(
             onDismissRequest = { showAddNewProductDialog(false) },
             product = null,
             saveData = {
-                viewModel.upsertProduct(it, context.applicationContext)
+                viewModel.upsertProduct(it)
             },
             selectImage = selectImage,
             selectedImage = selectedImage
@@ -156,7 +156,7 @@ fun ManagePage(
             onDismissRequest = { showEditProductDialog(null) },
             product = it,
             saveData = {
-                viewModel.upsertProduct(it, context.applicationContext)
+                viewModel.upsertProduct(it)
             },
             selectImage = selectImage,
             selectedImage = selectedImage

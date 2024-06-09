@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.anse.easyQrPay.R
-import com.anse.easyQrPay.models.product.Product
 import com.anse.easyQrPay.ui.component.button.CircleCancelTextButton
 import com.anse.easyQrPay.ui.component.button.CircleSaveTextButton
 import com.anse.easyQrPay.ui.component.textField.EzkioTextField
@@ -47,6 +46,7 @@ import com.anse.easyQrPay.ui.theme.LightGray
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
+import kr.yeeun0411.data.model.ProductModel
 
 @Preview
 @Composable
@@ -65,8 +65,8 @@ private fun ProductEditDialogPreview() {
 @Composable
 fun ProductEditDialog(
     onDismissRequest: () -> Unit,
-    product: Product?,
-    saveData: (Product) -> Unit,
+    product: ProductModel?,
+    saveData: (ProductModel) -> Unit,
     selectedImage: State<String?>,
     selectImage: () -> Unit,
 ) {
@@ -232,7 +232,7 @@ fun ProductEditDialog(
                         enabled = name.value.isNotBlank() && image.value != null,
                         onClick = {
                             if (it) saveData(
-                                Product(
+                                ProductModel(
                                     name = name.value,
                                     price = price.value ?: 0,
                                     image = image.value!!,

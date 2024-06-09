@@ -14,16 +14,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.anse.easyQrPay.R
-import com.anse.easyQrPay.models.product.ProductCategoryValue
 import com.anse.easyQrPay.ui.theme.DarkGray
 import com.anse.easyQrPay.ui.theme.Primary
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
+import kr.yeeun0411.data.model.CategoryModel
 
 @Composable
 fun CategoryItem(
-    category: ProductCategoryValue?,
+    category: CategoryModel?,
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -42,7 +42,7 @@ fun CategoryItem(
         )
     ) {
         Text(
-            text = stringResource(category?.nameRes ?: R.string.category_all_button),
+            text = category?.name ?: stringResource(R.string.category_all_button),
             modifier = Modifier
                 .align(Alignment.Center),
             fontSize = 16.sp,
