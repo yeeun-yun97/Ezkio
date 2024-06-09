@@ -47,6 +47,7 @@ import com.anse.easyQrPay.ui.component.state.rememberUiVisibility
 import com.anse.easyQrPay.ui.component.state.rememberUiVisibilityByNull
 import com.anse.easyQrPay.ui.item.CategoryItem
 import com.anse.easyQrPay.ui.item.ProductItem
+import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductDeleteConfirmDialog
 import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductEditDialog
 import com.anse.easyQrPay.ui.pages.managePage.menu.EProductMenu
 import com.anse.easyQrPay.ui.pages.managePage.menu.ProductMenu
@@ -113,6 +114,8 @@ fun ManagePage(
         }
     )
 
+    val (deleteProductDialogVisibility, showDeleteProductDialog) = rememberUiVisibilityByNull<String>()
+
     val onClickProductMenu = { menu: EProductMenu, productModel: ProductModel ->
         when (menu) {
             EProductMenu.EDIT_INFO -> {
@@ -126,8 +129,20 @@ fun ManagePage(
 
             EProductMenu.DELETE -> {
                 selectedProduct.value = null
+                showDeleteProductDialog(productModel.productCode)
             }
         }
+    }
+
+    deleteProductDialogVisibility.value?.let {
+        ProductDeleteConfirmDialog(
+            onDismissRequest = { showDeleteProductDialog(null) },
+            productCode = it,
+            onDelete = {
+                showDeleteProductDialog(null)
+                viewModel.deleteProduct(it)
+            }
+        )
     }
 
 

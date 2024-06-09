@@ -16,4 +16,10 @@ interface ProductDao {
     @Upsert
     fun upsertProduct(productValue: ProductEntity)
 
+    @Query("DELETE FROM Products WHERE product_code = :productCode")
+    fun deleteProductByProductCode(productCode: String)
+
+    @Query("UPDATE sales_products SET product_code = NULL WHERE product_code = :productCode")
+    fun updateSaleProductDeletedProductCode(productCode: String)
+
 }

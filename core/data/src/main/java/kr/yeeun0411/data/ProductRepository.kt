@@ -44,6 +44,11 @@ class ProductRepository @Inject constructor(
 
     }
 
+    fun deleteProduct(productCode: String) {
+        productDao.deleteProductByProductCode(productCode)
+        productDao.updateSaleProductDeletedProductCode(productCode)
+    }
+
 
 }
 

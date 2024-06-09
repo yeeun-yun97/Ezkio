@@ -13,7 +13,7 @@ data class SaleProductEntity(
     @ColumnInfo(name = "sale_code")
     val saleCode: String,
     @ColumnInfo(name = "product_code")
-    val productCode: String,
+    val productCode: String?,
     @ColumnInfo(name = "amount")
     val amount: Int,
     @ColumnInfo(name = "price")

@@ -53,5 +53,11 @@ class MainActivityViewModel @Inject constructor(
         repository.upsertProduct(it)
     }
 
+    fun deleteProduct(
+        productCode: String,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        repository.deleteProduct(productCode)
+    }
+
 
 }

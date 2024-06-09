@@ -61,6 +61,9 @@
     <string name="manage_page_product_edit_dialog_product_name_empty_toast">상품 이름을 설정해주세요.</string>
     <string name="manage_page_product_edit_dialog_product_image_empty_toast">상품 이미지를 설정해주세요.</string>
 
+    <!--상품 삭제하기 다이얼로그-->
+    <string name="manage_page_product_delete_confirm_dialog_title">상품을 삭제하시겠습니까?</string>
+    <string name="manage_page_product_delete_confirm_dialog_message">이 작업은 되돌릴 수 없습니다.\n삭제된 상품의 판매 데이터는 N/A항목에 합쳐집니다.</string>
 
 
 </resources>
