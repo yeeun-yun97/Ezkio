@@ -99,22 +99,6 @@ fun ManagePage(
     val productList = viewModel.productList.collectAsState(listOf())
     val selectedCategory = rememberSaveable { mutableStateOf<CategoryModel?>(null) }
     val selectedProduct = rememberSaveable { mutableStateOf<ProductModel?>(null) }
-    val onClickProductMenu = { menu: EProductMenu ->
-        when (menu) {
-            EProductMenu.EDIT_INFO -> {
-                selectedProduct.value = null
-            }
-
-            EProductMenu.MANAGE_STOCK -> {
-                selectedProduct.value = null
-            }
-
-            EProductMenu.DELETE -> {
-                selectedProduct.value = null
-            }
-        }
-    }
-
 
     val (addNewProductDialogVisibility, showAddNewProductDialog) = rememberUiVisibility(
         onHide = {
@@ -128,6 +112,25 @@ fun ManagePage(
             true
         }
     )
+
+    val onClickProductMenu = { menu: EProductMenu, productModel: ProductModel ->
+        when (menu) {
+            EProductMenu.EDIT_INFO -> {
+                selectedProduct.value = null
+                showEditProductDialog(productModel)
+            }
+
+            EProductMenu.MANAGE_STOCK -> {
+                selectedProduct.value = null
+            }
+
+            EProductMenu.DELETE -> {
+                selectedProduct.value = null
+            }
+        }
+    }
+
+
 
     if (addNewProductDialogVisibility.value) {
         ProductEditDialog(
@@ -346,7 +349,7 @@ fun ManagePage(
                                 ) {
                                     ProductMenu(
                                         Modifier.align(Alignment.Center),
-                                        onClickProductMenu
+                                        { onClickProductMenu(it, item) }
                                     )
                                 }
                             } else if (item.stopped || item.stock ?: Int.MAX_VALUE <= 0) {

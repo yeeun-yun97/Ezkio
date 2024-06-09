@@ -49,6 +49,7 @@ import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
 import kr.yeeun0411.database.model.model.ProductModel
+import java.util.UUID
 
 @Preview
 @Composable
@@ -236,9 +237,13 @@ fun ProductEditDialog(
                         onClick = {
                             if (it) saveData(
                                 ProductModel(
+                                    productCode = product?.productCode ?: UUID.randomUUID().toString(),
                                     name = name.value,
                                     price = price.value ?: 0,
                                     image = image.value!!,
+                                    stock = product?.stock,
+                                    categoryCode = product?.categoryCode,
+                                    stopped = product?.stopped ?: false
                                 )
                             ) else if (name.value.isBlank()) {
                                 Toast.makeText(context, R.string.manage_page_product_edit_dialog_product_name_empty_toast, Toast.LENGTH_SHORT).show()
