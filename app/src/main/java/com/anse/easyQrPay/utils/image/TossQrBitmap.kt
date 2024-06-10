@@ -2,8 +2,8 @@ package com.anse.easyQrPay.utils.image
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import com.anse.easyQrPay.models.accountNumberNoDashOrSpace
-import com.anse.easyQrPay.models.bankNameUrlEncoded
+import com.anse.easyQrPay.utils.string.accountNumberNoDashOrSpace
+import com.anse.easyQrPay.utils.string.bankNameUrlEncoded
 
 fun getTossQrBitmap(
     bankName: String,

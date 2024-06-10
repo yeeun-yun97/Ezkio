@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.anse.easyQrPay.R
-import com.anse.easyQrPay.models.accountNumberNoDashOrSpace
+import com.anse.easyQrPay.utils.string.accountNumberNoDashOrSpace
 import com.anse.easyQrPay.ui.component.button.CircleCancelTextButton
 import com.anse.easyQrPay.ui.component.button.CircleSaveTextButton
 import com.anse.easyQrPay.ui.component.switch.EzkioSwitch

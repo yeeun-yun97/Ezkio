@@ -85,5 +85,4 @@ fun CategoryDeleteConfirmDialog(
             }
         }
     }
-
 }
