@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EasyQrPay</string>
+    <string name="app_name">Ezkio</string>
 
     <!--공통 버튼 텍스트-->
     <string name="common_button_cancel">취소</string>
