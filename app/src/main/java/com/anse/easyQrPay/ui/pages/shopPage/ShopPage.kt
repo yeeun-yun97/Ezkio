@@ -161,7 +161,7 @@ fun ShopPage(
         }
         Surface(
             modifier = Modifier
-                .width(400.dp)
+                .width(460.dp)
                 .fillMaxHeight(),
             color = Color.White,
         ) {
