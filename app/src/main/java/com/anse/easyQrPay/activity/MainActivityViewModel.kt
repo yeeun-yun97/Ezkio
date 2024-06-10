@@ -29,7 +29,7 @@ class MainActivityViewModel @Inject constructor(
     fun getProductList(categoryCode: String?): Flow<List<ProductModel>> = repository.getProductsByCategoryCode(categoryCode)
 
     fun clearSelectedImage() {
-
+        _selectedImage.value = null
     }
 
     fun selectImage(base64: String?) {
