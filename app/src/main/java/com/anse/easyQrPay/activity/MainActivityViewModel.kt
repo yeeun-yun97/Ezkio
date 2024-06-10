@@ -34,11 +34,7 @@ class MainActivityViewModel @Inject constructor(
 
     fun finishOrder(orderMap: Map<ProductModel, Int>, onFinished: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            orderMap.entries.forEach { (product, count) ->
-                product.stock?.let {
-                    repository.purchaseProduct(product, count)
-                }
-            }
+            repository.purchaseProducts(orderMap)
             onFinished()
         }
     }

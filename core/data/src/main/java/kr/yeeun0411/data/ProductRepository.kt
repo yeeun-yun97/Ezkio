@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.map
 import kr.yeeun0411.data.converters.convertToEntity
 import kr.yeeun0411.data.converters.convertToModel
 import kr.yeeun0411.database.dao.ProductDao
+import kr.yeeun0411.database.model.SaleEntity
+import kr.yeeun0411.database.model.SaleProductEntity
 import kr.yeeun0411.database.model.model.CategoryModel
 import kr.yeeun0411.database.model.model.ProductModel
 import javax.inject.Inject
@@ -45,19 +47,24 @@ class ProductRepository @Inject constructor(
         )
     }
 
-    fun purchaseProduct(
-        product: ProductModel,
-        amount: Int,
-    ) {
-        //상품의 재고 수를 줄인다.
-        product.stock?.let {
-            productDao.upsertProduct(
-                product.copy(stock = it - amount).convertToEntity()
+    fun purchaseProducts(orderMap: Map<ProductModel, Int>) {
+        val sale = SaleEntity(
+            timeStamp = System.currentTimeMillis(),
+        )
+        productDao.insertSale(sale)
+        orderMap.forEach { (product, amount) ->
+            product.stock?.let {
+                productDao.upsertProduct(product.copy(stock = it - amount).convertToEntity())
+            }
+            productDao.insertSaleProduct(
+                SaleProductEntity(
+                    saleCode = sale.saleCode,
+                    productCode = product.productCode,
+                    amount = amount,
+                    price = product.price
+                )
             )
         }
-
-        //상품의 판매 정보를 저장한다.
-
     }
 
     fun deleteProduct(productCode: String) {

@@ -1,11 +1,14 @@
 package kr.yeeun0411.database.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import kr.yeeun0411.database.model.CategoryEntity
 import kr.yeeun0411.database.model.ProductEntity
+import kr.yeeun0411.database.model.SaleEntity
+import kr.yeeun0411.database.model.SaleProductEntity
 
 @Dao
 interface ProductDao {
@@ -36,5 +39,12 @@ interface ProductDao {
 
     @Query("UPDATE Products SET category_code = NULL WHERE category_code = :categoryCode")
     fun updateProductDeletedCategoryCode(categoryCode: String)
+
+    @Insert
+    fun insertSale(sale: SaleEntity)
+
+    @Insert
+    fun insertSaleProduct(saleProductEntity: SaleProductEntity)
+
 
 }
