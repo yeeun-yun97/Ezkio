@@ -43,10 +43,6 @@ class MainActivityViewModel @Inject constructor(
         }
     }
 
-    fun addCategory() {
-
-    }
-
     fun upsertProduct(
         it: ProductModel,
     ) = viewModelScope.launch(Dispatchers.IO) {
@@ -57,6 +53,12 @@ class MainActivityViewModel @Inject constructor(
         productCode: String,
     ) = viewModelScope.launch(Dispatchers.IO) {
         repository.deleteProduct(productCode)
+    }
+
+    fun upsertCategory(
+        it: CategoryModel,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        repository.upsertCategory(it)
     }
 
 

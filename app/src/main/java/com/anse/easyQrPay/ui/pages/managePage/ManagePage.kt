@@ -22,12 +22,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -47,9 +49,12 @@ import com.anse.easyQrPay.ui.component.state.rememberUiVisibility
 import com.anse.easyQrPay.ui.component.state.rememberUiVisibilityByNull
 import com.anse.easyQrPay.ui.item.CategoryItem
 import com.anse.easyQrPay.ui.item.ProductItem
+import com.anse.easyQrPay.ui.pages.managePage.dialog.CategoryEditDialog
 import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductDeleteConfirmDialog
 import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductEditDialog
 import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductManageStatusDialog
+import com.anse.easyQrPay.ui.pages.managePage.menu.CategoryDropdownMenu
+import com.anse.easyQrPay.ui.pages.managePage.menu.ECategoryMenu
 import com.anse.easyQrPay.ui.pages.managePage.menu.EProductMenu
 import com.anse.easyQrPay.ui.pages.managePage.menu.ProductMenu
 import com.anse.easyQrPay.ui.theme.DarkGray
@@ -119,6 +124,9 @@ fun ManagePage(
 
     val (manageProductStockDialogVisibility, showManageProductStockDialog) = rememberUiVisibilityByNull<ProductModel>()
 
+    val (addNewCategoryDialogVisibility, showAddNewCategoryDialog) = rememberUiVisibility()
+    val (editCategoryDialogVisibility, showEditCategoryDialog) = rememberUiVisibilityByNull<CategoryModel>()
+
     val onClickProductMenu = { menu: EProductMenu, productModel: ProductModel ->
         when (menu) {
             EProductMenu.EDIT_INFO -> {
@@ -134,6 +142,20 @@ fun ManagePage(
             EProductMenu.DELETE -> {
                 selectedProduct.value = null
                 showDeleteProductDialog(productModel.productCode)
+            }
+        }
+    }
+
+    val onClickCategoryMenu = { menu: ECategoryMenu, categoryModel: CategoryModel ->
+        when (menu) {
+            ECategoryMenu.EDIT_NAME -> {
+                selectedCategory.value = null
+                showEditCategoryDialog(categoryModel)
+            }
+
+            ECategoryMenu.DELETE -> {
+                selectedCategory.value = null
+                //TODO
             }
         }
     }
@@ -185,6 +207,28 @@ fun ManagePage(
             },
             selectImage = selectImage,
             selectedImage = selectedImage
+        )
+    }
+
+    if (addNewCategoryDialogVisibility.value) {
+        CategoryEditDialog(
+            onDismissRequest = { showAddNewCategoryDialog(false) },
+            category = null,
+            saveData = {
+                viewModel.upsertCategory(it)
+                showAddNewCategoryDialog(false)
+            }
+        )
+    }
+
+    editCategoryDialogVisibility.value?.let {
+        CategoryEditDialog(
+            onDismissRequest = { showEditCategoryDialog(null) },
+            category = it,
+            saveData = {
+                viewModel.upsertCategory(it)
+                showEditCategoryDialog(null)
+            }
         )
     }
 
@@ -281,19 +325,35 @@ fun ManagePage(
                         CategoryItem(
                             category = null,
                             isSelected = selectedCategory.value == null,
-                            onClick = { selectedCategory.value = null },
+                            onClick = {
+                                selectedCategory.value = null
+                            },
                         )
                     }
                     itemsIndexed(viewModel.categoryList) { index, item ->
-                        CategoryItem(
-                            category = item,
-                            isSelected = selectedCategory.value == item,
-                            onClick = { selectedCategory.value = item },
-                        )
+                        val expanded = remember {
+                            mutableStateOf(false)
+                        }
+                        Box {
+                            CategoryItem(
+                                category = item,
+                                isSelected = selectedCategory.value == item,
+                                onClick = {
+                                    if (selectedCategory.value != item)
+                                        selectedCategory.value = item
+                                    else expanded.value = true
+                                },
+                            )
+                            CategoryDropdownMenu(
+                                onDismissRequest = { expanded.value = false },
+                                expanded = expanded.value,
+                                onClickMenu = { onClickCategoryMenu(it, item) }
+                            )
+                        }
                     }
                     item {
                         AnseButton(
-                            onClick = { if (it) viewModel.addCategory() },
+                            onClick = { if (it) showAddNewCategoryDialog(true) },
                             modifier = Modifier
                                 .heightIn(min = 40.dp),
                             buttonStyle = AnseButtonStyle.newStyle(

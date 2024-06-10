@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.map
 import kr.yeeun0411.data.converters.convertToEntity
 import kr.yeeun0411.data.converters.convertToModel
 import kr.yeeun0411.database.dao.ProductDao
+import kr.yeeun0411.database.model.model.CategoryModel
 import kr.yeeun0411.database.model.model.ProductModel
 import javax.inject.Inject
 
@@ -47,6 +48,10 @@ class ProductRepository @Inject constructor(
     fun deleteProduct(productCode: String) {
         productDao.deleteProductByProductCode(productCode)
         productDao.updateSaleProductDeletedProductCode(productCode)
+    }
+
+    fun upsertCategory(it: CategoryModel) {
+        productDao.upsertCategory(it.convertToEntity())
     }
 
 
