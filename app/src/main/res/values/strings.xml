@@ -91,12 +91,13 @@
     <string name="manage_page_bank_account_edit_dialog_account_holder_name_hint">계좌주 이름</string>
     <string name="manage_page_bank_account_edit_dialog_bank_name_hint">은행 이름</string>
     <string name="manage_page_bank_account_edit_dialog_account_number_hint">계좌번호 (숫자와 -만)</string>
-    <string name="manage_page_bank_account_edit_dialog_product_bank_name_empty_toast">계좌주 이름을 설정해주세요.</string>
-    <string name="manage_page_bank_account_edit_dialog_product_account_holder_empty_toast">은행 이름을 설정해주세요.</string>
+    <string name="manage_page_bank_account_edit_dialog_product_bank_name_empty_toast">은행 이름을 설정해주세요.</string>
+    <string name="manage_page_bank_account_edit_dialog_product_account_holder_empty_toast">계좌주 이름을 설정해주세요.</string>
     <string name="manage_page_bank_account_edit_dialog_product_account_number_empty_toast">계좌번호를 설정해주세요.</string>
     <string name="manage_page_bank_account_edit_dialog_qr_code_message">저장 전에 토스 QR이 잘 작동하는지 확인해보세요.</string>
     <string name="manage_page_bank_account_edit_dialog_use_qr_switch_on">사용중</string>
     <string name="manage_page_bank_account_edit_dialog_use_qr_switch_off">사용 안함</string>
+    <string name="manage_page_bank_account_null_toast">키오스크를 이용하기 전에, 계좌 정보를 등록해주세요.</string>
 
 
 </resources>

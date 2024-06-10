@@ -1,17 +1,12 @@
 package com.anse.easyQrPay.ui.pages.shopPage.view
 
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,7 +17,6 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -33,10 +27,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.anse.easyQrPay.R
-import com.anse.easyQrPay.models.BankAccountValue
-import com.anse.easyQrPay.models.accountNumberNoDashOrSpace
-import com.anse.easyQrPay.models.bankNameUrlEncoded
+import com.anse.easyQrPay.ui.item.QrCodeItem
 import com.anse.easyQrPay.ui.theme.EasyQrPayTheme
+import com.anse.easyQrPay.utils.image.getTossQrBitmap
+import kr.yeeun0411.data.model.BankAccountModel
 
 @Preview(device = "spec:width=1280dp,height=800dp,dpi=240")
 @Composable
@@ -44,41 +38,27 @@ private fun AccountInfoViewPreview() {
     EasyQrPayTheme {
         AccountInfoView(
             price = 1000,
-            bankAccount = exampleBankAccount,
+            bankAccount = BankAccountModel(
+                accountHolder = "홍길동",
+                bankName = "국민은행",
+                accountNumber = "1234567890"
+            ),
         )
     }
-}
-
-val exampleBankAccount = BankAccountValue(
-    bankName = "하나은행",
-    accountHolderName = "박하나",
-    accountNumber = "176-123456-78901"
-)
-
-fun getTossQrBitmap(
-    bankName: String,
-    accountNumber: String,
-    price: Int? = null,
-): ImageBitmap {
-    val url = "supertoss://send?${price?.let { "amount = ${it}&" }}bank=${bankName.bankNameUrlEncoded()}&accountNo=${accountNumber.accountNumberNoDashOrSpace()}&origin=qr"
-    return net.glxn.qrgen.android.QRCode
-        .from(url)
-        .withSize(300, 300)
-        .bitmap()
-        .asImageBitmap()
 }
 
 @Composable
 fun AccountInfoView(
     price: Int,
-    bankAccount: BankAccountValue = exampleBankAccount,
+    bankAccount: BankAccountModel,
 ) {
-    val bitmapToss: ImageBitmap = remember(price) {
+    val bitmapToss: ImageBitmap? = remember(price, bankAccount) {
         getTossQrBitmap(
             bankName = bankAccount.bankName,
             accountNumber = bankAccount.accountNumber,
             price = price
         )
+
     }
 
     Surface(color = Color(0xFFE9E9E9)) {
@@ -126,7 +106,7 @@ fun AccountInfoView(
                 )
                 Spacer(Modifier.width(36.dp))
                 AccountInfoItem(
-                    accountHolderName = bankAccount.accountHolderName,
+                    accountHolderName = bankAccount.accountHolder,
                     bankName = bankAccount.bankName,
                     accountNumber = bankAccount.accountNumber
                 )
@@ -138,23 +118,13 @@ fun AccountInfoView(
 @Composable
 private fun QRItem(
     name: String,
-    bitmap: ImageBitmap,
+    bitmap: ImageBitmap?,
     size: Dp,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Surface(
-            modifier = Modifier.padding(8.dp),
-            color = Color.White,
-            shape = RoundedCornerShape(8.dp),
-        ) {
-            Image(
-                modifier = Modifier.size(size),
-                bitmap = bitmap,
-                contentDescription = "qrCode"
-            )
-        }
+        QrCodeItem(size = size, bitmap = bitmap)
         Spacer(Modifier.height(10.dp))
         Text(
             name,

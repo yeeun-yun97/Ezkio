@@ -1,5 +1,6 @@
 package com.anse.easyQrPay.ui.pages.managePage
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -69,15 +71,6 @@ import com.anse.uikit.components.button.AnseButtonStyle
 import kr.yeeun0411.data.model.CategoryModel
 import kr.yeeun0411.data.model.ProductModel
 
-val productExample = ProductModel(
-    productCode = "1",
-    price = 1000,
-    name = "product1",
-    image = "",
-    stock = 10,
-    categoryCode = "category1"
-)
-
 @Preview
 @Composable
 fun ManagePagePreview() {
@@ -102,6 +95,7 @@ fun ManagePage(
     selectedImage: State<String?>,
     clearSelectedImage: () -> Unit,
 ) {
+    val context = LocalContext.current
     val selectedCategoryCode = rememberSaveable { mutableStateOf<String?>(null) }
     val selectedProduct = rememberSaveable { mutableStateOf<ProductModel?>(null) }
 
@@ -113,7 +107,6 @@ fun ManagePage(
         }
     }.collectAsState(initial = listOf())
     val bankAccount = viewModel.bankAccount.collectAsState(initial = null)
-
 
     val (addNewProductDialogVisibility, showAddNewProductDialog) = rememberUiVisibility(
         onHide = {
@@ -162,6 +155,15 @@ fun ManagePage(
             ECategoryMenu.DELETE -> {
                 showDeleteCategoryDialog(categoryModel.categoryCode)
             }
+        }
+    }
+
+    val navigateToKiosk = {
+        if(bankAccount.value != null) {
+            navigateToKiosk()
+        } else{
+            Toast.makeText(context, R.string.manage_page_bank_account_null_toast, Toast.LENGTH_SHORT).show()
+            showBankAccountEditDialog(true)
         }
     }
 

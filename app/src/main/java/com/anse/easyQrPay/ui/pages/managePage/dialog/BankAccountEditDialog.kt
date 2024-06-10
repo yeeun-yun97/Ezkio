@@ -2,19 +2,16 @@ package com.anse.easyQrPay.ui.pages.managePage.dialog
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,17 +39,12 @@ import com.anse.easyQrPay.ui.component.button.CircleSaveTextButton
 import com.anse.easyQrPay.ui.component.switch.EzkioSwitch
 import com.anse.easyQrPay.ui.component.textField.EzkioTextField
 import com.anse.easyQrPay.ui.component.textField.ezkioTextFieldStyle
-import com.anse.easyQrPay.ui.pages.shopPage.view.getTossQrBitmap
+import com.anse.easyQrPay.ui.item.QrCodeItem
+import com.anse.easyQrPay.utils.image.getTossQrBitmap
 import com.anse.easyQrPay.ui.theme.DarkGray
 import com.anse.easyQrPay.ui.theme.LightGray
+import com.anse.easyQrPay.utils.string.accountNumberAvailable
 import kr.yeeun0411.data.model.BankAccountModel
-
-fun String.accountNumberAvailable(): Boolean {
-    val availableChars = listOf(
-        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-',
-    )
-    return this.toCharArray().find { it !in availableChars } == null
-}
 
 @Composable
 fun BankAccountEditDialog(
@@ -78,8 +70,6 @@ fun BankAccountEditDialog(
             )
         }
     }
-
-
 
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -251,9 +241,9 @@ fun BankAccountEditDialog(
                                 )
                             ) else if (bankName.value.isBlank()) {
                                 Toast.makeText(context, R.string.manage_page_bank_account_edit_dialog_product_bank_name_empty_toast, Toast.LENGTH_SHORT).show()
-                            } else if (accountHolder.value == null) {
+                            } else if (accountHolder.value.isBlank()) {
                                 Toast.makeText(context, R.string.manage_page_bank_account_edit_dialog_product_account_holder_empty_toast, Toast.LENGTH_SHORT).show()
-                            } else if (accountNumber.value == null) {
+                            } else if (accountNumber.value.isBlank()) {
                                 Toast.makeText(context, R.string.manage_page_bank_account_edit_dialog_product_account_number_empty_toast, Toast.LENGTH_SHORT).show()
                             }
                         }
@@ -275,25 +265,11 @@ private fun QRPreview(
         modifier = Modifier.width(160.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Surface(
-            modifier = Modifier.padding(8.dp),
-            color = Color.White,
-            shape = RoundedCornerShape(8.dp),
+        QrCodeItem(
+            size = 160.dp,
+            bitmap = bitmap,
             shadowElevation = 4.dp
-        ) {
-            bitmap?.let {
-                Image(
-                    modifier = Modifier.size(160.dp),
-                    bitmap = bitmap,
-                    contentDescription = "qrCode"
-                )
-            } ?: CircularProgressIndicator(
-                modifier = Modifier
-                    .size(160.dp)
-                    .padding(55.dp),
-                color = DarkGray
-            )
-        }
+        )
         Spacer(Modifier.height(15.dp))
         EzkioSwitch(
             modifier = Modifier.widthIn(min = 300.dp),

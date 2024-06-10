@@ -86,6 +86,7 @@ fun ShopPage(
             else viewModel.getProductList(it.categoryCode)
         }
     }.collectAsState(initial = emptyList())
+    val bankAccount = viewModel.bankAccount.collectAsState(initial = null)
 
     val setItemCount = { it: Int, item: ProductModel ->
         if (it <= 0) shoppingList.remove(item)
@@ -154,9 +155,12 @@ fun ShopPage(
                     productList = productList,
                 )
             } else {
-                AccountInfoView(
-                    price = shoppingPrice.value
-                )
+                bankAccount.value?.let {
+                    AccountInfoView(
+                        price = shoppingPrice.value,
+                        bankAccount = it
+                    )
+                }
             }
         }
         Surface(
