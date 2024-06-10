@@ -3,6 +3,7 @@ package com.anse.easyQrPay.ui.pages.managePage.dialog
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -22,6 +23,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.anse.easyQrPay.R
 import com.anse.easyQrPay.ui.component.button.CircleCancelTextButton
+import com.anse.easyQrPay.ui.component.button.CircleConfirmTextButton
 import com.anse.easyQrPay.ui.component.button.CircleSaveTextButton
 import com.anse.easyQrPay.ui.theme.DarkGray
 import com.anse.easyQrPay.ui.theme.EasyQrPayTheme
@@ -53,10 +55,12 @@ fun ProductDeleteConfirmDialog(
     ) {
         Surface(
             color = Color.White,
+            modifier = Modifier.width(380.dp),
             shape = RoundedCornerShape(20.dp)
         ) {
             Column(
                 Modifier
+                    .fillMaxWidth()
                     .padding(top = 37.dp, start = 30.dp, end = 30.dp, bottom = 28.dp)
             ) {
                 Text(
@@ -86,7 +90,7 @@ fun ProductDeleteConfirmDialog(
                         onClick = { if (it) onDismissRequest() }
                     )
                     Spacer(Modifier.width(14.dp))
-                    CircleSaveTextButton(
+                    CircleConfirmTextButton(
                         modifier = Modifier.weight(1f, false),
                         onClick = {
                             if (it) onDelete(productCode)
