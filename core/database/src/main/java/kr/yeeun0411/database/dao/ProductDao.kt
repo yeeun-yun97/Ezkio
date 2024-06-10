@@ -28,4 +28,10 @@ interface ProductDao {
     @Upsert
     fun upsertCategory(category: CategoryEntity)
 
+    @Query("DELETE FROM Categories WHERE category_code = :categoryCode")
+    fun deleteCategoryByCategoryCode(categoryCode: String)
+
+    @Query("UPDATE Products SET category_code = NULL WHERE category_code = :categoryCode")
+    fun updateProductDeletedCategoryCode(categoryCode: String)
+
 }

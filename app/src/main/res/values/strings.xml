@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">EasyQrPay</string>
 
+    <!--공통 버튼 텍스트-->
     <string name="common_button_cancel">취소</string>
     <string name="common_button_save">저장</string>
+    <string name="common_button_confirm">확인</string>
 
     <string name="qr_page_title">이용해 주셔서 감사합니다!!!</string>
     <string name="qr_page_price_message_prefix">"총 "</string>
@@ -85,5 +87,8 @@
     <string name="manage_page_category_edit_dialog_create_title">카테고리 만들기</string>
     <string name="manage_page_category_edit_dialog_title">카테고리 수정하기</string>
     <string name="manage_page_category_edit_dialog_category_name">카테고리 이름</string>
+    <string name="manage_page_category_delete_confirm_dialog_title">카테고리를 삭제하시겠습니까?</string>
+    <string name="manage_page_category_delete_confirm_dialog_message">이 작업은 되돌릴 수 없습니다.</string>
+
 
 </resources>

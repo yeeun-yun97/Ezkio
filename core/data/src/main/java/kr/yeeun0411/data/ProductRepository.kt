@@ -1,7 +1,5 @@
 package kr.yeeun0411.data
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kr.yeeun0411.data.converters.convertToEntity
@@ -60,6 +58,11 @@ class ProductRepository @Inject constructor(
 
     fun upsertCategory(it: CategoryModel) {
         productDao.upsertCategory(it.convertToEntity())
+    }
+
+    fun deleteCategory(categoryCode: String) {
+        productDao.deleteCategoryByCategoryCode(categoryCode)
+        productDao.updateProductDeletedCategoryCode(categoryCode)
     }
 
 

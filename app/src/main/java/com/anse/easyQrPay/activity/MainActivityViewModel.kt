@@ -2,7 +2,6 @@ package com.anse.easyQrPay.activity
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,6 +57,12 @@ class MainActivityViewModel @Inject constructor(
         it: CategoryModel,
     ) = viewModelScope.launch(Dispatchers.IO) {
         repository.upsertCategory(it)
+    }
+
+    fun deleteCategory(
+        categoryCode: String,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        repository.deleteCategory(categoryCode)
     }
 
 

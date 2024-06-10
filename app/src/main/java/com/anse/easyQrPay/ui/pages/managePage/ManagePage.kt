@@ -48,6 +48,7 @@ import com.anse.easyQrPay.ui.component.state.rememberUiVisibility
 import com.anse.easyQrPay.ui.component.state.rememberUiVisibilityByNull
 import com.anse.easyQrPay.ui.item.CategoryItem
 import com.anse.easyQrPay.ui.item.ProductItem
+import com.anse.easyQrPay.ui.pages.managePage.dialog.CategoryDeleteConfirmDialog
 import com.anse.easyQrPay.ui.pages.managePage.dialog.CategoryEditDialog
 import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductDeleteConfirmDialog
 import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductEditDialog
@@ -127,6 +128,7 @@ fun ManagePage(
 
     val (addNewCategoryDialogVisibility, showAddNewCategoryDialog) = rememberUiVisibility()
     val (editCategoryDialogVisibility, showEditCategoryDialog) = rememberUiVisibilityByNull<CategoryModel>()
+    val (deleteCategoryDialogVisibility, showDeleteCategoryDialog) = rememberUiVisibilityByNull<String>()
 
     val onClickProductMenu = { menu: EProductMenu, productModel: ProductModel ->
         when (menu) {
@@ -154,7 +156,7 @@ fun ManagePage(
             }
 
             ECategoryMenu.DELETE -> {
-                //TODO
+                showDeleteCategoryDialog(categoryModel.categoryCode)
             }
         }
     }
@@ -177,6 +179,18 @@ fun ManagePage(
             saveData = {
                 viewModel.upsertProduct(it)
                 showManageProductStockDialog(null)
+            }
+        )
+    }
+
+    deleteCategoryDialogVisibility.value?.let {
+        CategoryDeleteConfirmDialog(
+            onDismissRequest = { showDeleteCategoryDialog(null) },
+            categoryCode = it,
+            onDelete = {
+                showDeleteCategoryDialog(null)
+                viewModel.deleteCategory(it)
+                selectedCategoryCode.value = null
             }
         )
     }
