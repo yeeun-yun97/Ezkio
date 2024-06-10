@@ -59,8 +59,9 @@ private fun ProductEditDialogPreview() {
             onDismissRequest = {},
             product = null,
             saveData = {},
+            selectedImage = rememberUpdatedState(newValue = null),
             selectImage = {},
-            selectedImage = rememberUpdatedState(newValue = null)
+            categoryCode = null
         )
     }
 }
@@ -69,6 +70,7 @@ private fun ProductEditDialogPreview() {
 fun ProductEditDialog(
     onDismissRequest: () -> Unit,
     product: ProductModel?,
+    categoryCode: String?,
     saveData: (ProductModel) -> Unit,
     selectedImage: State<String?>,
     selectImage: () -> Unit,
@@ -242,7 +244,7 @@ fun ProductEditDialog(
                                     price = price.value ?: 0,
                                     image = image.value!!,
                                     stock = product?.stock,
-                                    categoryCode = product?.categoryCode,
+                                    categoryCode = categoryCode ?: product?.categoryCode,
                                     stopped = product?.stopped ?: false
                                 )
                             ) else if (name.value.isBlank()) {

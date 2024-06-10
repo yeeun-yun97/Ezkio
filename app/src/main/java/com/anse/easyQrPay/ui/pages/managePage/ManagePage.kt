@@ -211,6 +211,7 @@ fun ManagePage(
                 viewModel.upsertProduct(it)
                 showAddNewProductDialog(false)
             },
+            categoryCode = selectedCategoryCode.value,
             selectImage = selectImage,
             selectedImage = selectedImage
         )
@@ -224,8 +225,9 @@ fun ManagePage(
                 viewModel.upsertProduct(it)
                 showEditProductDialog(null)
             },
+            selectedImage = selectedImage,
             selectImage = selectImage,
-            selectedImage = selectedImage
+            categoryCode = null
         )
     }
 
