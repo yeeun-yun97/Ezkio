@@ -103,11 +103,17 @@ fun ManagePage(
     selectedImage: State<String?>,
     clearSelectedImage: () -> Unit,
 ) {
-    val productList = viewModel.productList.collectAsState(listOf())
-    val categoryList = viewModel.categoryList.collectAsState(listOf())
-
     val selectedCategoryCode = rememberSaveable { mutableStateOf<String?>(null) }
     val selectedProduct = rememberSaveable { mutableStateOf<ProductModel?>(null) }
+
+    val categoryList = viewModel.categoryList.collectAsState(listOf())
+    val productList = remember(selectedCategoryCode.value) {
+        selectedCategoryCode.value.let {
+            if (it == null) viewModel.productList
+            else viewModel.getProductList(it)
+        }
+    }.collectAsState(initial = listOf())
+
 
     val (addNewProductDialogVisibility, showAddNewProductDialog) = rememberUiVisibility(
         onHide = {

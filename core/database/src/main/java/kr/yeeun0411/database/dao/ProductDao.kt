@@ -13,6 +13,9 @@ interface ProductDao {
     @Query("SELECT * FROM Products")
     fun getAllProducts(): Flow<List<ProductEntity>>
 
+    @Query("SELECT * FROM Products WHERE category_code = :categoryCode")
+    fun getProductsByCategoryCode(categoryCode: String?): Flow<List<ProductEntity>>
+
     @Query("SELECT * FROM Categories")
     fun getAllCategories(): Flow<List<CategoryEntity>>
 

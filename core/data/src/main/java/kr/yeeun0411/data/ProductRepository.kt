@@ -28,6 +28,15 @@ class ProductRepository @Inject constructor(
         }
     }
 
+    fun getProductsByCategoryCode(categoryCode: String?): Flow<List<ProductModel>> {
+        return productDao.getProductsByCategoryCode(categoryCode).map {
+            it.map {
+                it.convertToModel()
+            }
+        }
+    }
+
+
     fun upsertProduct(
         product: ProductModel,
     ) {

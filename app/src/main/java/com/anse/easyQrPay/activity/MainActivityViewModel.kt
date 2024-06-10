@@ -22,6 +22,8 @@ class MainActivityViewModel @Inject constructor(
     val categoryList: Flow<List<CategoryModel>> = repository.getCategories()
     val productList: Flow<List<ProductModel>> get() = repository.getProducts()
 
+    fun getProductList(categoryCode: String?): Flow<List<ProductModel>> = repository.getProductsByCategoryCode(categoryCode)
+
     fun clearSelectedImage() {
 
     }
