@@ -24,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.anse.easyQrPay.R
+import com.anse.easyQrPay.activity.MainActivityViewModel
 import com.anse.easyQrPay.ui.component.state.rememberUiVisibility
 import com.anse.easyQrPay.ui.item.ProductSimpleItem
 import com.anse.easyQrPay.ui.pages.shopPage.dialog.ClearShoppingListConfirmDialog
@@ -65,8 +67,8 @@ import kotlin.math.min
 @Composable
 fun ShopPage(
     popBackToManagePage: () -> Unit,
+    viewModel: MainActivityViewModel,
     categoryList: State<List<CategoryModel>>,
-    productList: State<List<ProductModel>>,
     finishOrder: (Map<ProductModel, Int>, () -> Unit) -> Unit,
 ) {
     val context = LocalContext.current
@@ -78,6 +80,12 @@ fun ShopPage(
             shoppingList.entries.map { (product, amount) -> product.price * amount }.sum()
         }
     }
+    val productList = remember(selectedCategory.value) {
+        selectedCategory.value.let {
+            if (it == null) viewModel.productList
+            else viewModel.getProductList(it.categoryCode)
+        }
+    }.collectAsState(initial = emptyList())
 
     val setItemCount = { it: Int, item: ProductModel ->
         if (it <= 0) shoppingList.remove(item)
