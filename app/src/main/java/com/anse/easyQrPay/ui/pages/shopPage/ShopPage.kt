@@ -119,7 +119,7 @@ fun ShopPage(
         ClearShoppingListConfirmDialog(
             onDismissRequest = { showClearShoppingListConfirmDialog(false) },
             onClear = {
-                /*TODO*/
+                shoppingList.clear()
                 showClearShoppingListConfirmDialog(false)
             }
         )
