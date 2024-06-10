@@ -20,8 +20,7 @@ class MainActivityViewModel @Inject constructor(
 ) : ViewModel() {
     private val _selectedImage = mutableStateOf<String?>(null)
     val selectedImage: State<String?> = _selectedImage
-    val categoryList: List<CategoryModel> = listOf()
-
+    val categoryList: Flow<List<CategoryModel>> = repository.getCategories()
     val productList: Flow<List<ProductModel>> get() = repository.getProducts()
 
     fun clearSelectedImage() {

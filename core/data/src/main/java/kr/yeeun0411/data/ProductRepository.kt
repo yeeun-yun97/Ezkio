@@ -22,6 +22,14 @@ class ProductRepository @Inject constructor(
         }
     }
 
+    fun getCategories(): Flow<List<CategoryModel>> {
+        return productDao.getAllCategories().map {
+            it.map {
+                it.convertToModel()
+            }
+        }
+    }
+
     fun upsertProduct(
         product: ProductModel,
     ) {

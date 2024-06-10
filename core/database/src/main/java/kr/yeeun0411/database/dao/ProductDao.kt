@@ -13,6 +13,9 @@ interface ProductDao {
     @Query("SELECT * FROM Products")
     fun getAllProducts(): Flow<List<ProductEntity>>
 
+    @Query("SELECT * FROM Categories")
+    fun getAllCategories(): Flow<List<CategoryEntity>>
+
     @Upsert
     fun upsertProduct(product: ProductEntity)
 

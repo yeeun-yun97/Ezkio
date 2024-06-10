@@ -65,7 +65,7 @@ import kotlin.math.min
 
 @Composable
 fun ShopPage(
-    categoryList: List<CategoryModel>,
+    categoryList: State<List<CategoryModel>>,
     productList: State<List<ProductModel>>,
     finishOrder: (Map<ProductModel, Int>, () -> Unit) -> Unit,
 //    navigateToQRPage: () -> Unit,
@@ -160,7 +160,7 @@ fun ShopPage(
                                 onClick = { selectedCategory.value = null },
                             )
                         }
-                        itemsIndexed(categoryList) { index, item ->
+                        itemsIndexed(categoryList.value) { index, item ->
                             CategoryItem(
                                 category = item,
                                 isSelected = selectedCategory.value == item,

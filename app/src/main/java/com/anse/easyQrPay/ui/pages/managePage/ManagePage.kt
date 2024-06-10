@@ -22,7 +22,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -104,7 +103,9 @@ fun ManagePage(
     clearSelectedImage: () -> Unit,
 ) {
     val productList = viewModel.productList.collectAsState(listOf())
-    val selectedCategory = rememberSaveable { mutableStateOf<CategoryModel?>(null) }
+    val categoryList = viewModel.categoryList.collectAsState(listOf())
+
+    val selectedCategoryCode = rememberSaveable { mutableStateOf<String?>(null) }
     val selectedProduct = rememberSaveable { mutableStateOf<ProductModel?>(null) }
 
     val (addNewProductDialogVisibility, showAddNewProductDialog) = rememberUiVisibility(
@@ -149,12 +150,10 @@ fun ManagePage(
     val onClickCategoryMenu = { menu: ECategoryMenu, categoryModel: CategoryModel ->
         when (menu) {
             ECategoryMenu.EDIT_NAME -> {
-                selectedCategory.value = null
                 showEditCategoryDialog(categoryModel)
             }
 
             ECategoryMenu.DELETE -> {
-                selectedCategory.value = null
                 //TODO
             }
         }
@@ -324,30 +323,33 @@ fun ManagePage(
                     item {
                         CategoryItem(
                             category = null,
-                            isSelected = selectedCategory.value == null,
+                            isSelected = selectedCategoryCode.value == null,
                             onClick = {
-                                selectedCategory.value = null
+                                selectedCategoryCode.value = null
                             },
                         )
                     }
-                    itemsIndexed(viewModel.categoryList) { index, item ->
+                    itemsIndexed(categoryList.value) { index, item ->
                         val expanded = remember {
                             mutableStateOf(false)
                         }
                         Box {
                             CategoryItem(
                                 category = item,
-                                isSelected = selectedCategory.value == item,
+                                isSelected = selectedCategoryCode.value == item.categoryCode,
                                 onClick = {
-                                    if (selectedCategory.value != item)
-                                        selectedCategory.value = item
+                                    if (selectedCategoryCode.value != item.categoryCode)
+                                        selectedCategoryCode.value = item.categoryCode
                                     else expanded.value = true
                                 },
                             )
                             CategoryDropdownMenu(
                                 onDismissRequest = { expanded.value = false },
                                 expanded = expanded.value,
-                                onClickMenu = { onClickCategoryMenu(it, item) }
+                                onClickMenu = {
+                                    onClickCategoryMenu(it, item)
+                                    expanded.value = false
+                                }
                             )
                         }
                     }

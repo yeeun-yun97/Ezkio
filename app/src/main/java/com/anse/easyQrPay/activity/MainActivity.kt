@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
                         ShopPage(
                             productList = viewModel.productList.collectAsState(initial = listOf()),
                             finishOrder = finishOrder,
-                            categoryList = viewModel.categoryList,
+                            categoryList = viewModel.categoryList.collectAsState(initial = listOf()),
                         )
                     }
 
