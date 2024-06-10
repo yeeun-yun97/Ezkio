@@ -95,16 +95,22 @@ fun AccountInfoView(
                     textAlign = TextAlign.Center
                 )
             )
-            Spacer(Modifier.height(40.dp))
+            if (!bankAccount.useQr) {
+                Spacer(Modifier.height(110.dp))
+            } else {
+                Spacer(Modifier.height(40.dp))
+            }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                QRItem(
-                    stringResource(id = R.string.shop_page_account_info_qr_title),
-                    bitmapToss,
-                    size = 300.dp
-                )
-                Spacer(Modifier.width(36.dp))
+                if (bankAccount.useQr) {
+                    QRItem(
+                        stringResource(id = R.string.shop_page_account_info_qr_title),
+                        bitmapToss,
+                        size = 300.dp
+                    )
+                    Spacer(Modifier.width(36.dp))
+                }
                 AccountInfoItem(
                     accountHolderName = bankAccount.accountHolder,
                     bankName = bankAccount.bankName,
