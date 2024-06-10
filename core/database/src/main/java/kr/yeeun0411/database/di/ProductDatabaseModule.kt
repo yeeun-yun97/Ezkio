@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kr.yeeun0411.database.ProductDatabase
+import kr.yeeun0411.database.dao.BankAccountDao
 import kr.yeeun0411.database.dao.ProductDao
 import javax.inject.Singleton
 
@@ -30,6 +31,11 @@ internal object ProductDatabaseModule {
     fun providesProductDao(
         database: ProductDatabase,
     ): ProductDao = database.getProductDao()
+
+    @Provides
+    fun providesBankAccountDao(
+        database: ProductDatabase,
+    ): BankAccountDao = database.getBankAccountDao()
 
 
 }

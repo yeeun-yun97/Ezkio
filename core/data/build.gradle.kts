@@ -4,6 +4,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
     id("kotlin-android")
+    id("kotlin-parcelize")
 }
 
 android {

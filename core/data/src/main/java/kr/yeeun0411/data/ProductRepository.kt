@@ -7,8 +7,8 @@ import kr.yeeun0411.data.converters.convertToModel
 import kr.yeeun0411.database.dao.ProductDao
 import kr.yeeun0411.database.model.SaleEntity
 import kr.yeeun0411.database.model.SaleProductEntity
-import kr.yeeun0411.database.model.model.CategoryModel
-import kr.yeeun0411.database.model.model.ProductModel
+import kr.yeeun0411.data.model.CategoryModel
+import kr.yeeun0411.data.model.ProductModel
 import javax.inject.Inject
 
 class ProductRepository @Inject constructor(

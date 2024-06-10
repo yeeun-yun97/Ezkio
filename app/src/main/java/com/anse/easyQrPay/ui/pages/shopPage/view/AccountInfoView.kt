@@ -55,19 +55,30 @@ val exampleBankAccount = BankAccountValue(
     accountNumber = "176-123456-78901"
 )
 
+fun getTossQrBitmap(
+    bankName: String,
+    accountNumber: String,
+    price: Int? = null,
+): ImageBitmap {
+    val url = "supertoss://send?${price?.let { "amount = ${it}&" }}bank=${bankName.bankNameUrlEncoded()}&accountNo=${accountNumber.accountNumberNoDashOrSpace()}&origin=qr"
+    return net.glxn.qrgen.android.QRCode
+        .from(url)
+        .withSize(300, 300)
+        .bitmap()
+        .asImageBitmap()
+}
+
 @Composable
 fun AccountInfoView(
     price: Int,
     bankAccount: BankAccountValue = exampleBankAccount,
 ) {
-    val url = "supertoss://send?amount=${price}&bank=${bankAccount.bankNameUrlEncoded()}&accountNo=${bankAccount.accountNumberNoDashOrSpace()}&origin=qr"
-    Log.d("QRUrl", "$url")
     val bitmapToss: ImageBitmap = remember(price) {
-        net.glxn.qrgen.android.QRCode
-            .from(url)
-            .withSize(300, 300)
-            .bitmap()
-            .asImageBitmap()
+        getTossQrBitmap(
+            bankName = bankAccount.bankName,
+            accountNumber = bankAccount.accountNumber,
+            price = price
+        )
     }
 
     Surface(color = Color(0xFFE9E9E9)) {

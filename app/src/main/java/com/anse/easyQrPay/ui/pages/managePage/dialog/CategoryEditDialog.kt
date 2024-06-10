@@ -34,7 +34,7 @@ import com.anse.easyQrPay.ui.component.textField.EzkioTextField
 import com.anse.easyQrPay.ui.component.textField.ezkioTextFieldStyle
 import com.anse.easyQrPay.ui.theme.DarkGray
 import com.anse.easyQrPay.ui.theme.LightGray
-import kr.yeeun0411.database.model.model.CategoryModel
+import kr.yeeun0411.data.model.CategoryModel
 
 @Composable
 @Preview

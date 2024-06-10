@@ -9,18 +9,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kr.yeeun0411.data.ProductRepository
-import kr.yeeun0411.database.model.model.CategoryModel
-import kr.yeeun0411.database.model.model.ProductModel
+import kr.yeeun0411.data.SettingRepository
+import kr.yeeun0411.data.model.BankAccountModel
+import kr.yeeun0411.data.model.CategoryModel
+import kr.yeeun0411.data.model.ProductModel
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val repository: ProductRepository,
+    private val settingRepository: SettingRepository,
 ) : ViewModel() {
     private val _selectedImage = mutableStateOf<String?>(null)
     val selectedImage: State<String?> = _selectedImage
     val categoryList: Flow<List<CategoryModel>> = repository.getCategories()
     val productList: Flow<List<ProductModel>> get() = repository.getProducts()
+    val bankAccount: Flow<BankAccountModel?> get() = settingRepository.getBankAccount()
 
     fun getProductList(categoryCode: String?): Flow<List<ProductModel>> = repository.getProductsByCategoryCode(categoryCode)
 
@@ -61,6 +65,12 @@ class MainActivityViewModel @Inject constructor(
         categoryCode: String,
     ) = viewModelScope.launch(Dispatchers.IO) {
         repository.deleteCategory(categoryCode)
+    }
+
+    fun upsertBankAccount(
+        it: BankAccountModel,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        settingRepository.upsertBankAccount(it)
     }
 
 

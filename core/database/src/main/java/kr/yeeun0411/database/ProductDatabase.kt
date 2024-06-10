@@ -2,6 +2,7 @@ package kr.yeeun0411.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import kr.yeeun0411.database.model.BankAccountEntity
 import kr.yeeun0411.database.model.CategoryEntity
 import kr.yeeun0411.database.model.ProductEntity
 import kr.yeeun0411.database.model.SaleEntity
@@ -13,9 +14,11 @@ import kr.yeeun0411.database.model.SaleProductEntity
         ProductEntity::class,
         CategoryEntity::class,
         SaleEntity::class,
-        SaleProductEntity::class
+        SaleProductEntity::class,
+        BankAccountEntity::class
     ]
 )
 abstract class ProductDatabase : RoomDatabase() {
     abstract fun getProductDao(): kr.yeeun0411.database.dao.ProductDao
+    abstract fun getBankAccountDao(): kr.yeeun0411.database.dao.BankAccountDao
 }

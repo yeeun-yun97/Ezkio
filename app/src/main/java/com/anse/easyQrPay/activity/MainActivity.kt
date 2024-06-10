@@ -27,7 +27,7 @@ import com.anse.easyQrPay.ui.pages.managePage.ManagePage
 import com.anse.easyQrPay.ui.pages.shopPage.ShopPage
 import com.anse.easyQrPay.ui.theme.EasyQrPayTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kr.yeeun0411.database.model.model.ProductModel
+import kr.yeeun0411.data.model.ProductModel
 import java.io.ByteArrayOutputStream
 
 @AndroidEntryPoint
@@ -98,7 +98,6 @@ class MainActivity : ComponentActivity() {
                             selectImage = openImage,
                             selectedImage = viewModel.selectedImage,
                             clearSelectedImage = { viewModel.clearSelectedImage() },
-                            navigateToSetting = { /*navController.navigate("setting")*/ },
                             navigateToStatics = { /*navController.navigate("statics")*/ },
                             navigateToKiosk = { navController.navigate("shop") }
                         )

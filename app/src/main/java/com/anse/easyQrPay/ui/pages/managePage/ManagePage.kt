@@ -48,6 +48,7 @@ import com.anse.easyQrPay.ui.component.state.rememberUiVisibility
 import com.anse.easyQrPay.ui.component.state.rememberUiVisibilityByNull
 import com.anse.easyQrPay.ui.item.CategoryItem
 import com.anse.easyQrPay.ui.item.ProductItem
+import com.anse.easyQrPay.ui.pages.managePage.dialog.BankAccountEditDialog
 import com.anse.easyQrPay.ui.pages.managePage.dialog.CategoryDeleteConfirmDialog
 import com.anse.easyQrPay.ui.pages.managePage.dialog.CategoryEditDialog
 import com.anse.easyQrPay.ui.pages.managePage.dialog.ProductDeleteConfirmDialog
@@ -65,8 +66,8 @@ import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonNoStyle
 import com.anse.uikit.components.button.AnseButtonStyle
-import kr.yeeun0411.database.model.model.CategoryModel
-import kr.yeeun0411.database.model.model.ProductModel
+import kr.yeeun0411.data.model.CategoryModel
+import kr.yeeun0411.data.model.ProductModel
 
 val productExample = ProductModel(
     productCode = "1",
@@ -83,7 +84,6 @@ fun ManagePagePreview() {
     EasyQrPayTheme {
         ManagePage(
             selectImage = {},
-            navigateToSetting = {},
             navigateToStatics = {},
             navigateToKiosk = {},
             selectedImage = rememberUpdatedState(newValue = null),
@@ -97,7 +97,6 @@ fun ManagePagePreview() {
 fun ManagePage(
     viewModel: MainActivityViewModel,
     selectImage: () -> Unit,
-    navigateToSetting: () -> Unit,
     navigateToStatics: () -> Unit,
     navigateToKiosk: () -> Unit,
     selectedImage: State<String?>,
@@ -113,6 +112,7 @@ fun ManagePage(
             else viewModel.getProductList(it)
         }
     }.collectAsState(initial = listOf())
+    val bankAccount = viewModel.bankAccount.collectAsState(initial = null)
 
 
     val (addNewProductDialogVisibility, showAddNewProductDialog) = rememberUiVisibility(
@@ -127,14 +127,12 @@ fun ManagePage(
             true
         }
     )
-
     val (deleteProductDialogVisibility, showDeleteProductDialog) = rememberUiVisibilityByNull<String>()
-
     val (manageProductStockDialogVisibility, showManageProductStockDialog) = rememberUiVisibilityByNull<ProductModel>()
-
     val (addNewCategoryDialogVisibility, showAddNewCategoryDialog) = rememberUiVisibility()
     val (editCategoryDialogVisibility, showEditCategoryDialog) = rememberUiVisibilityByNull<CategoryModel>()
     val (deleteCategoryDialogVisibility, showDeleteCategoryDialog) = rememberUiVisibilityByNull<String>()
+    val (bankAccountEditDialogVisibility, showBankAccountEditDialog) = rememberUiVisibility()
 
     val onClickProductMenu = { menu: EProductMenu, productModel: ProductModel ->
         when (menu) {
@@ -253,6 +251,17 @@ fun ManagePage(
         )
     }
 
+    if (bankAccountEditDialogVisibility.value) {
+        BankAccountEditDialog(
+            onDismissRequest = { showBankAccountEditDialog(false) },
+            bankAccount = bankAccount.value,
+            saveData = { it ->
+                viewModel.upsertBankAccount(it)
+                showBankAccountEditDialog(false)
+            }
+        )
+    }
+
 
 
 
@@ -309,7 +318,7 @@ fun ManagePage(
                     }
                     Spacer(Modifier.width(10.dp))
                     AnseButtonNoStyle(
-                        onClick = { if (it) navigateToSetting() }
+                        onClick = { if (it) showBankAccountEditDialog(true) }
                     ) {
                         Box(Modifier.size(40.dp)) {
                             Image(

@@ -34,7 +34,7 @@ import com.anse.easyQrPay.utils.image.stringToBitmap
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
-import kr.yeeun0411.database.model.model.ProductModel
+import kr.yeeun0411.data.model.ProductModel
 
 @Composable
 fun ProductModel.ProductItem(

@@ -48,7 +48,7 @@ import com.anse.easyQrPay.ui.theme.LightGray
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
-import kr.yeeun0411.database.model.model.ProductModel
+import kr.yeeun0411.data.model.ProductModel
 import java.util.UUID
 
 @Preview

@@ -8,10 +8,10 @@ data class BankAccountValue(
     val accountNumber: String,
 )
 
-fun BankAccountValue.accountNumberNoDashOrSpace(): String {
-    return accountNumber.replace("-", "").replace(" ", "")
+fun String.accountNumberNoDashOrSpace(): String {
+    return this.replace("-", "").replace(" ", "")
 }
 
-fun BankAccountValue.bankNameUrlEncoded(): String {
-    return URLEncoder.encode(bankName, "UTF-8")
+fun String.bankNameUrlEncoded(): String {
+    return URLEncoder.encode(this, "UTF-8")
 }

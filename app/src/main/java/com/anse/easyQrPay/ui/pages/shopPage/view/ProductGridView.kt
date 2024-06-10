@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.anse.easyQrPay.ui.item.CategoryItem
 import com.anse.easyQrPay.ui.item.ProductItem
-import kr.yeeun0411.database.model.model.CategoryModel
-import kr.yeeun0411.database.model.model.ProductModel
+import kr.yeeun0411.data.model.CategoryModel
+import kr.yeeun0411.data.model.ProductModel
 
 @Preview
 @Composable
