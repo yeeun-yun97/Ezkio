@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.anse.easyQrPay.R
-import com.anse.easyQrPay.ui.pages.shopPage.StringToBitmap
+import com.anse.easyQrPay.utils.image.stringToBitmap
 import com.anse.uikit.components.button.AnseButton
 import com.anse.uikit.components.button.AnseButtonColors
 import com.anse.uikit.components.button.AnseButtonStyle
@@ -89,7 +89,7 @@ fun ProductItem(
         ) {
             Box(Modifier.clip(RoundedCornerShape(5.dp))) {
                 Image(
-                    painter = StringToBitmap(image)?.let { BitmapPainter(image = it) } ?: painterResource(R.drawable.ic_launcher_background),
+                    painter = stringToBitmap(image)?.let { BitmapPainter(image = it) } ?: painterResource(R.drawable.ic_launcher_background),
                     contentDescription = "product_image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.aspectRatio(1f, matchHeightConstraintsFirst = false),

@@ -42,7 +42,7 @@ fun CategoryItem(
         )
     ) {
         Text(
-            text = category?.name ?: stringResource(R.string.category_all_button),
+            text = category?.name ?: stringResource(R.string.manage_page_category_all_button),
             modifier = Modifier
                 .align(Alignment.Center),
             fontSize = 16.sp,

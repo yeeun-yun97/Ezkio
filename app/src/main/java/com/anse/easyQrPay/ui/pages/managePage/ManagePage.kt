@@ -389,7 +389,7 @@ fun ManagePage(
                             )
                         ) {
                             Text(
-                                text = stringResource(R.string.category_add_button),
+                                text = stringResource(R.string.manage_page_category_add_button),
                                 modifier = Modifier.align(Alignment.Center),
                                 fontSize = 16.sp,
                                 lineHeight = 20.sp,
@@ -437,7 +437,7 @@ fun ManagePage(
                                 )
                                 Spacer(Modifier.height(20.dp))
                                 Text(
-                                    stringResource(id = R.string.manage_page_add_product_button),
+                                    stringResource(id = R.string.manage_page_product_add_button),
                                     color = it,
                                     fontSize = 20.sp
                                 )

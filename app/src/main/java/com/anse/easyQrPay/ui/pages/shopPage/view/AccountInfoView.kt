@@ -1,4 +1,4 @@
-package com.anse.easyQrPay.ui.pages.qrPage
+package com.anse.easyQrPay.ui.pages.shopPage.view
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Surface
@@ -17,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -38,9 +40,9 @@ import com.anse.easyQrPay.ui.theme.EasyQrPayTheme
 
 @Preview(device = "spec:width=1280dp,height=800dp,dpi=240")
 @Composable
-fun QRPagePreview() {
+private fun AccountInfoViewPreview() {
     EasyQrPayTheme {
-        QRPage(
+        AccountInfoView(
             price = 1000,
             bankAccount = exampleBankAccount,
         )
@@ -54,7 +56,7 @@ val exampleBankAccount = BankAccountValue(
 )
 
 @Composable
-fun QRPage(
+fun AccountInfoView(
     price: Int,
     bankAccount: BankAccountValue = exampleBankAccount,
 ) {
@@ -75,69 +77,48 @@ fun QRPage(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                stringResource(R.string.qr_page_title),
+                stringResource(R.string.shop_page_account_info_title),
                 style = LocalTextStyle.current.copy(
-                    fontSize = 46.sp,
-                    lineHeight = 58.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 30.sp,
+                    lineHeight = 36.sp,
+                    fontWeight = FontWeight.ExtraLight,
                     textAlign = TextAlign.Center
                 )
             )
             Text(
                 buildAnnotatedString {
                     append(
-                        stringResource(id = R.string.qr_page_price_message_prefix)
+                        stringResource(id = R.string.shop_page_account_info_price_message_prefix)
                     )
-                    pushStyle(style = SpanStyle(fontSize = 100.sp))
+                    pushStyle(style = SpanStyle(fontSize = 80.sp, fontWeight = FontWeight.Bold))
                     append(price.toString())
                     pop()
                     append(
-                        stringResource(id = R.string.qr_page_price_message_suffix)
+                        stringResource(id = R.string.shop_page_account_info_price_message_suffix)
                     )
                 },
                 style = LocalTextStyle.current.copy(
-                    fontSize = 47.sp,
-                    lineHeight = 55.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 40.sp,
+                    lineHeight = 46.sp,
+                    fontWeight = FontWeight.Light,
                     textAlign = TextAlign.Center
                 )
             )
-            Spacer(Modifier.height(15.dp))
+            Spacer(Modifier.height(40.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(30.dp)
             ) {
                 QRItem(
-                    stringResource(id = R.string.qr_page_toss_qr_title),
+                    stringResource(id = R.string.shop_page_account_info_qr_title),
                     bitmapToss,
                     size = 300.dp
                 )
-                Column {
-                    Text(
-                        stringResource(id = R.string.qr_page_bank_account_title),
-                        style = LocalTextStyle.current.copy(
-                            fontSize = 30.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
-                    )
-                    Spacer(Modifier.height(15.dp))
-                    Text(
-                        "${bankAccount.bankName} ${bankAccount.accountHolderName}",
-                        style = LocalTextStyle.current.copy(
-                            fontSize = 36.sp,
-                            textAlign = TextAlign.Center
-                        )
-                    )
-                    Text(
-                        bankAccount.accountNumber,
-                        style = LocalTextStyle.current.copy(
-                            fontSize = 60.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
-                    )
-                }
+                Spacer(Modifier.width(36.dp))
+                AccountInfoItem(
+                    accountHolderName = bankAccount.accountHolderName,
+                    bankName = bankAccount.bankName,
+                    accountNumber = bankAccount.accountNumber
+                )
             }
         }
     }
@@ -154,9 +135,8 @@ private fun QRItem(
     ) {
         Surface(
             modifier = Modifier.padding(8.dp),
-            color = androidx.compose.ui.graphics.Color.White,
+            color = Color.White,
             shape = RoundedCornerShape(8.dp),
-            shadowElevation = 10.dp,
         ) {
             Image(
                 modifier = Modifier.size(size),
@@ -164,13 +144,53 @@ private fun QRItem(
                 contentDescription = "qrCode"
             )
         }
+        Spacer(Modifier.height(10.dp))
         Text(
             name,
+            modifier = Modifier.width(size),
             style = LocalTextStyle.current.copy(
-                fontSize = 32.sp,
-                lineHeight = 36.sp,
-                fontWeight = FontWeight.SemiBold,
+                fontSize = 30.sp,
+                lineHeight = 32.sp,
+                fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center
+            )
+        )
+    }
+}
+
+@Composable
+private fun AccountInfoItem(
+    accountHolderName: String,
+    bankName: String,
+    accountNumber: String,
+) {
+    Column {
+        Text(
+            stringResource(id = R.string.shop_page_account_info_account_title),
+            style = LocalTextStyle.current.copy(
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Light,
+                textAlign = TextAlign.Start
+            )
+        )
+        Spacer(Modifier.height(25.dp))
+        Text(
+            "${bankName} ${accountHolderName}",
+            modifier = Modifier.align(CenterHorizontally),
+            style = LocalTextStyle.current.copy(
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Normal,
+                textAlign = TextAlign.Start
+            )
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            accountNumber,
+            modifier = Modifier.align(CenterHorizontally),
+            style = LocalTextStyle.current.copy(
+                fontSize = 48.sp,
+                fontWeight = FontWeight.Normal,
+                textAlign = TextAlign.Start
             )
         )
     }

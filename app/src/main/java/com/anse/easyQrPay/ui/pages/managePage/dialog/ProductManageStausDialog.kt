@@ -49,9 +49,9 @@ import com.anse.easyQrPay.ui.component.button.CircleSaveTextButton
 import com.anse.easyQrPay.ui.component.switch.EzkioSwitch
 import com.anse.easyQrPay.ui.component.textField.EzkioTextField
 import com.anse.easyQrPay.ui.component.textField.ezkioTextFieldStyle
-import com.anse.easyQrPay.ui.pages.shopPage.StringToBitmap
 import com.anse.easyQrPay.ui.theme.DarkGray
 import com.anse.easyQrPay.ui.theme.LightGray
+import com.anse.easyQrPay.utils.image.stringToBitmap
 import kr.yeeun0411.database.model.model.ProductModel
 import java.util.UUID
 
@@ -129,7 +129,7 @@ fun ProductManageStatusDialog(
                                 .size(155.dp)
                         ) {
                             Image(
-                                painter = StringToBitmap(product.image)?.let { BitmapPainter(image = it) } ?: painterResource(R.drawable.ic_launcher_background),
+                                painter = stringToBitmap(product.image)?.let { BitmapPainter(image = it) } ?: painterResource(R.drawable.ic_launcher_background),
                                 contentDescription = "product_image",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.aspectRatio(1f, matchHeightConstraintsFirst = false),

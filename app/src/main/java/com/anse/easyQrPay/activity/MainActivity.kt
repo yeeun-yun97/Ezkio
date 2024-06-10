@@ -85,6 +85,7 @@ class MainActivity : ComponentActivity() {
                 NavHost(startDestination = "manage", navController = navController) {
                     composable("shop") {
                         ShopPage(
+                            popBackToManagePage = { navController.popBackStack() },
                             productList = viewModel.productList.collectAsState(initial = listOf()),
                             finishOrder = finishOrder,
                             categoryList = viewModel.categoryList.collectAsState(initial = listOf()),
